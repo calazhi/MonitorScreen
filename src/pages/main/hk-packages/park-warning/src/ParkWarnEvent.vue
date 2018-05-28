@@ -3,12 +3,25 @@
     <div v-show=" !showSelectGuards " v-if="primaryWarnList.length>0">
       <carousel height="16.3rem" :noAction="true" dotTop="-1.64rem" @change="pageChange" ref="carousel">
         <carousel-item>
-          <component :is="currentWarn" :warnData="warnData" :ocxbgColor="ocxbgColor" :errorImg="errorImg" :defaultImg="defaultImg" ref="warnList" @choseDispathGuard="choseDispathGuard" @closeWarnEvent="closeWarnEvent" :checkedInfo="checkedInfo" @mulDismissWarn="mulDismissWarn">
+          <component :is="currentWarn"
+                     :warnData="warnData"
+                     :ocxbgColor="ocxbgColor"
+                     :errorImg="errorImg"
+                     :defaultImg="defaultImg"
+                     ref="warnList"
+                     @choseDispathGuard="choseDispathGuard"
+                     @closeWarnEvent="closeWarnEvent"
+                     :checkedInfo="checkedInfo"
+                     @mulDismissWarn="mulDismissWarn">
           </component>
         </carousel-item>
       </carousel>
     </div>
-    <select-guards v-if="showSelectGuards" @cancleSelectGuards="cancleSelectGuards" :securityList="checkedInfo.recommedSecurity" :warnData="warnData"></select-guards>
+    <select-guards v-if="showSelectGuards"
+                   @cancleSelectGuards="cancleSelectGuards"
+                   :securityList="checkedInfo.recommedSecurity"
+                   :warnData="warnData">
+    </select-guards>
   </div>
 </template>
 <script>
@@ -17,7 +30,7 @@ import patrolAccident from './PatrolAccident.vue'
 import selectGuards from './components/SelectGuards'
 import controller from '@/pages/main/controller'
 // import mutationTypes from '@/pages/main/store/mutation-types'
-import { getSecurityDistanceList, hasPatrolSecuritys, getWarnData, hasDoneInfo, disMissWarning, eleDismissWarn } from '@/pages/main/api/park-warning'
+import { getSecurityDistanceList, hasPatrolSecuritys, getWarnData, hasDoneInfo, disMissWarning, eleDismissWarn, forceDeleteWarning } from '@/pages/main/api/park-warning'
 import { recursionGetCatchPic } from '../util'
 export default {
   name: 'parkWarning',
@@ -73,8 +86,9 @@ export default {
       this.$refs.carousel.setItemLength(this.primaryWarnList.length)
     },
     /**
-  * @desc  处理收到的webscoket消息
-  */
+    * @desc  处理收到的webscoket消息
+    * 事件状态： 99未解除  1处理中   3已完成   4已解除   98手动解除
+    */
     handleReceiveData (info) {
       if (this.primaryWarnList.length === 0) {
         this.$store.commit('sendMessage', {
@@ -106,13 +120,13 @@ export default {
                 this.hasDispatchInfo() // 查询事件完成信息
                 // }
               }
-            } else if (message.eventHeader.eventStatus === '3') {
+            } else if (message.eventHeader.eventStatus === '3') { // 事件完成
               this.primaryWarnList[index].eventHeader.eventStatus = '3'
               this.$refs.carousel.setActiveItem(index)
               this.$refs.warnList.dealWarnInfo = false
               this.$refs.warnList.isShowDone = true
               this.hasDoneInfo() // 查询事件完成信息
-            } else if (message.eventHeader.eventStatus === '4') {
+            } else if (message.eventHeader.eventStatus === '4') { // 已解除预警
               this.updateWarnArray([message.eventHeader.eventId])
             }
           }
@@ -124,6 +138,7 @@ export default {
       getWarnData().then(res => {
         res.map(item => {
           switch (item.eventHeader.eventType) {
+            // 越界、落水、电子围栏
             case '25020':
             case '25019':
             case '91001':
@@ -166,7 +181,7 @@ export default {
       })
     },
     /**
-   * @desc  获取事件已完成信息
+   * @desc  获取事件已解除信息
    */
     hasDispatchInfo () {
       hasPatrolSecuritys({ eventId: this.warnData.eventHeader.eventId }).then(res => {
@@ -233,15 +248,33 @@ export default {
       this.getSecurityList()
       this.showSelectGuards = true
     },
-    // 解除预警
-    mulDismissWarn (eventId) {
-      if (eventId) {
-        let id = eventId
-        disMissWarning({ ids: [id] }).then(res => {
-          this.updateWarnArray([id])
-        }).catch(err => {
-          console.log(err)
-        })
+    /**
+     * @desc 解除预警（正常单个解除，批量解除，强制单个解除）,并且跟新当前窗口的预警数量
+     * @param eventId { string } 解除当前预警ID
+     * @param forcible { boole } 解除类型是否为强制解除
+     */
+    mulDismissWarn (args) {
+      console.log('解除单个预警入参', args.eventId, args.forcible)
+      if (args.eventId) { // 解除单个预警
+        console.log('解除单个预警')
+        let id = args.eventId
+        if (args.forcible) { // 强制解除
+          forceDeleteWarning({eventId: args.eventId}).then(res => {
+            console.log('解除预警成功', res)
+            this.updateWarnArray([id])
+            this.$refs.warnList.closeForcibleDismissPop()
+          }).catch(err => {
+            this.$refs.warnList.closeForcibleDismissPop()
+            this.$refs.warnList.popError('解除预警失败')
+            console.log(err)
+          })
+        } else { // 正常解除
+          disMissWarning({ ids: [id] }).then(res => {
+            this.updateWarnArray([id])
+          }).catch(err => {
+            console.log(err)
+          })
+        }
       } else {
         let ids = []
         this.primaryWarnList.map((item, index) => {
@@ -249,7 +282,7 @@ export default {
             ids.push(item.eventHeader.eventId)
           }
         })
-        if (ids.length > 0) {
+        if (ids.length > 0) { // 批量正常解除预警
           disMissWarning({ ids: ids }).then(res => {
             // console.log(res)
             this.updateWarnArray(ids)
@@ -280,7 +313,7 @@ export default {
         })
       }
       this.$refs.warnList.isConfirm = false
-    }
+    },
   },
   computed: {
     arrayLength () {

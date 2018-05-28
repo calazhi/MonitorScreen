@@ -11,18 +11,13 @@ import '@/assets/css/main.css'
 import 'hdmap'
 import 'hdmap/dist/hdmap.css'
 import global_ from '@/assets/js/global'
-import { justifyPageView } from '@/assets/js/utils'
+import '@/assets/js/utils/justify-page-view'
 import controller from './controller'
 
 Vue.use(Hkcomponents)
 Vue.prototype.GLOBAL = global_
 
 const Bus = new Vue()
-
-// console.log('main.html entry!')
-
-// 初始化一下页面的比例，适配开发环境的显示器。
-justifyPageView()
 
 controller.init()
 

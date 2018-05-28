@@ -32,6 +32,27 @@ div,ul,li{
 }
 
 @font-face {
+  font-family: 'thiely1h';
+  src: url('/static/fonts/thiely1h.eot');
+  src: url('/static/fonts/thiely1h.eot?#iefix') format('embedded-opentype'),
+  url('/static/fonts/thiely1h.woff') format('woff'),
+  url('/static/fonts/thiely1h.ttf') format('truetype'),
+  url('/static/fonts/thiely1h.svg#iconfont') format('svg');
+}
+
+.number {
+  font-family: "thiely1h" !important;
+}
+/*
+@font-face {
+  font-family: 'iconfont';  !* project id 616019 *!
+  src: url('/static/fonts/iconfont.eot');
+  src: url('/static/fonts/iconfont.eot?#iefix') format('embedded-opentype'),
+  url('/static/fonts/iconfont.woff') format('woff'),
+  url('/static/fonts/iconfont.ttf') format('truetype'),
+  url('/static/fonts/iconfont.svg#iconfont') format('svg');
+}*/
+@font-face {
   font-family: 'iconfont';  /* project id 616019 */
   src: url('/static/fonts/iconfont.eot');
   src: url('/static/fonts/iconfont.eot?#iefix') format('embedded-opentype'),
@@ -100,6 +121,9 @@ div,ul,li{
   background-repeat: no-repeat;
   background-position: center 0;
   background-size: auto 100%;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
 }
 
 .item-box .bd{
@@ -235,11 +259,19 @@ div,ul,li{
 
 .clear-confirm-box .iframe-box {
   position: absolute;
-  width: 12.8rem;
-  height: 7.2rem;
-  top: 2.86rem;
-  left: 2.67rem;
+  width: 14rem;
+  height: 7.54rem;
+  top: 2.3rem;
+  left: 1.5rem;
   /*transform: translate(-50%,-50%);*/
+}
+
+.clear-confirm-box .robot-iframe-box {
+  position: absolute;
+  width: 16rem;
+  height: 9rem;
+  top: 2.2rem;
+  left: 1.4rem;
 }
 
 .clear-confirm-box .bg {
@@ -285,14 +317,20 @@ div,ul,li{
   margin-left: 1.3rem;
 }
 
-.clear-confirm-box .con .btn.cancel {
-  border-color: rgba(74, 144, 226, 1);
-  background-color: rgba(0, 152, 255, .08);
+.item-warning .clear-confirm-box .btn.cancel {
+  background-color: #302209;
 }
 
-.clear-confirm-box .con .btn.confirm {
-  border-color: rgba(110, 234, 253, .5);
-  background-color: rgba(74, 144, 226, .5);
+.item-warning .clear-confirm-box .btn.confirm {
+  background-color: #654f19;
+}
+
+.item-danger .clear-confirm-box .btn.cancel {
+  background-color: #320A0A;
+}
+
+.item-danger .clear-confirm-box .btn.confirm {
+  background-color: #531414;
 }
 
 /*无信号样式 && 清楚所以事件*/

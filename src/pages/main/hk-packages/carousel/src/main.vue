@@ -244,6 +244,7 @@ export default {
 }
 .el-carousel__container {
   position: relative;
+  z-index: 7;
 }
 .el-carousel__item {
   width: 100%;

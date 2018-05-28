@@ -18,10 +18,10 @@
         </div>
 
         <div class="title">
-          <p>24小时出入人次</p>
+          <p><em class="num">24</em>小时出入人次</p>
           <p>
-            <span class="in"><i>进</i>{{inCount}}</span>
-            <span class="out"><i>出</i>{{outCount}}</span>
+            <span class="in"><i>进</i><em class="num">{{inCount}}</em></span>
+            <span class="out"><i>出</i><em class="num">{{outCount}}</em></span>
           </p>
         </div>
         <!-- 24小时人流量图 -->
@@ -34,8 +34,8 @@
 </template>
 <script>
 import echarts from 'echarts'
-import {getPersonCount, getInOutTotalCount} from './apis/index'
-import { loadWebsocket } from '@/websocket/index'// , sendMessage
+import {getPersonCount, getInOutTotalCount} from './api/index'
+import { loadWebsocket } from '@/assets/js/websocket'
 export default {
   name: 'app',
   data () {
@@ -52,9 +52,7 @@ export default {
   },
   mounted () {
     // 启动 websocket
-    loadWebsocket(
-      this.onWebsocketMessageReceived, 'egscuipersonstatistics'
-    )
+    loadWebsocket('egscuipersonstatistics').then(this.onWebsocketMessageReceived)
     // 查询今日访客和其他人员数
     this.getPersonCount()
     // 查询24小时进出人数
@@ -205,7 +203,7 @@ export default {
           axisLabel: {
             fontSize: '20' * per,
             color: '#858096',
-            fontFamily: 'Microsoft YaHei',
+            fontFamily: 'thiely1h',
             margin: '10'
           },
           axisPointer: {
@@ -228,7 +226,7 @@ export default {
           axisLabel: {
             fontSize: '20' * per,
             color: '#858096',
-            fontFamily: 'Microsoft YaHei',
+            fontFamily: 'thiely1h',
             align: 'left',
             margin: '20' * per * 2.8
           },
@@ -386,6 +384,10 @@ export default {
     border-radius: 50%;
   }
 
+  .person-statistics .title .num {
+    font-family: thiely1h;
+  }
+
   .person-statistics .title .in:before{
     border: .15rem solid #975ef0;
   }
@@ -463,6 +465,7 @@ export default {
   .person-statistics .visit-box .num{
     font-size: 3.5rem;
     line-height: 1;
+    font-family: thiely1h;
   }
 
   /*-- 人员统计--*/

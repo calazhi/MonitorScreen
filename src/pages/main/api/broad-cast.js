@@ -1,4 +1,4 @@
-import Axios from '@/assets/js/axios-plugin'
+import axios from '@/assets/js/axios-plugin'
 
 /**
  * 调控当前广播音量, 向后台提交相关参数后更改广播音量值
@@ -8,7 +8,7 @@ import Axios from '@/assets/js/axios-plugin'
  * @param {number} vol    当前音量
  */
 export const postBroadcastVolumeData = data => {
-  return Axios({
+  return axios({
     method: 'post',
     url: '/scp-broadcastapp/map/volume/upOrDown',
     data
@@ -21,7 +21,7 @@ export const postBroadcastVolumeData = data => {
  */
 export const postGetBroadcast = data => {
   console.log(data)
-  return Axios({
+  return axios({
     method: 'post',
     url: '/scp-broadcastapp/map/search2',
     data
@@ -36,7 +36,7 @@ export const postGetBroadcast = data => {
  * @param {num} allPlayArea
  */
 export const playBroadcast = data => {
-  return Axios({
+  return axios({
     method: 'post',
     url: '/scp-broadcastapp/map/startOrStop',
     data
@@ -50,7 +50,7 @@ export const playBroadcast = data => {
  * @param {num} allPlayArea
  */
 export const changePlayState = data => {
-  return Axios({
+  return axios({
     method: 'post',
     url: '/scp-broadcastapp/map/lastOrNext2',
     data
@@ -61,7 +61,7 @@ export const changePlayState = data => {
  * @description 获取广播设备信息
  */
 export const getBroadcastdialog = data => {
-  return Axios({
+  return axios({
     method: 'get',
     url: '/scp-mapapp/mapapp/getDeviceInfo',
     params: data
@@ -72,7 +72,7 @@ export const getBroadcastdialog = data => {
  * @description 获取任务列表
  */
 export const getTaskListData = data => {
-  return Axios({
+  return axios({
     method: 'get',
     url: '/scp-broadcastapp/map/searchBroadcst',
     params: data
@@ -83,7 +83,7 @@ export const getTaskListData = data => {
  * @description 播放即时任务
  */
 export const pauseRealtimeTask = data => {
-  return Axios({
+  return axios({
     method: 'post',
     url: '/scp-broadcastapp/map/start',
     data

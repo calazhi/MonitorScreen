@@ -1,5 +1,5 @@
 <template>
-  <div class="home-wrap" @contextmenu.prevent>
+  <div class="home-wrap">
     <browser-tip></browser-tip>
     <div class="main">
       <div class="main-top">

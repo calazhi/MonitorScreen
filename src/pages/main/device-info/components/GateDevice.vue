@@ -7,7 +7,7 @@
       <div class="left-box">
         <div class="view">
           <!-- <img src="/static/images/p06.png" alt="" class="pic"> -->
-          <single-screen :videoplayData="videoplayData" :ocxbgColor="ocxbgColor"></single-screen>
+          <single-screen :videoplayData="videoplayData" v-if="videoplayData.deviceID" :ocxbgColor="ocxbgColor"></single-screen>
         </div>
         <div class="note">{{operateResult}}</div><!--文字弹层提示-->
         <button type="button" class="btn confirm" @click="openGate(deviceId, parentId, gateWayId)">远程开门</button>

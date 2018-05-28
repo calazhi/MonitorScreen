@@ -74,10 +74,8 @@
 </template>
 
 <script>
-import {
-  getCommunitySecurityData
-} from './apis/index'
-import { loadWebsocket } from '@/websocket/index'
+import { getCommunitySecurityData } from './api/index'
+import { loadWebsocket } from '@/assets/js/websocket'
 import md5 from 'js-md5'
 export default {
   name: 'app',
@@ -98,9 +96,7 @@ export default {
   mounted () {
     this.init()
     this.getSecurityData()
-    loadWebsocket(
-      this.onWebsocketMessageReceived, 'egscuigardensecurity'
-    )
+    loadWebsocket('egscuigardensecurity').then(this.onWebsocketMessageReceived)
   },
   methods: {
     // websocket 数据获取
@@ -393,6 +389,7 @@ export default {
   font-size: 7rem;
   height: 7rem;
   line-height: 1;
+  font-family: "thiely1h";
 }
 
 .community-security .right-info {
@@ -434,6 +431,7 @@ export default {
   font-size: 4rem;
   height: 4rem;
   line-height: 1;
+  font-family: "thiely1h";
 }
 
 .community-security .number-box .txt {
@@ -495,6 +493,7 @@ export default {
 
 .community-security .list-box .time {
   width: 10.25rem;
+  font-family: "thiely1h";
 }
 
 .community-security .no-warning-list-box small {

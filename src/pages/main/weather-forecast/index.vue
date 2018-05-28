@@ -2,9 +2,9 @@
   <div class="item-box weather-box">
     <div class="bd">
       <div class="area-time">
-        <p class="area" @touchstart="showCleanWarn" @touchend="clearLoop">{{city.cityViewName}}</p>
-        <p class="date">{{date}}</p>
-        <p class="time">{{time}}</p>
+        <p class="area">{{city.cityViewName}}</p>
+        <p class="date number">{{date}}</p>
+        <p class="time number">{{time}}</p>
       </div>
 
       <div class="weather-info">
@@ -15,7 +15,7 @@
               <div class="icon-view-big">
                 <img :src="condition.iconSrc" alt="" class="ico-weather">
               </div>
-              <div class="temperature"><em>{{condition.temp}}</em>℃</div>
+              <div class="temperature number"><em>{{condition.temp}}</em>℃</div>
             </div>
             <div class="detail">
               <p>空气质量</p>
@@ -23,8 +23,8 @@
               <p class="txt">{{condition.condition}}</p>
             </div>
             <div class="other">
-              <p class="ico icon-wind">{{condition.windDir}}{{condition.windLevel}}级</p>
-              <p class="ico icon-humidity">{{condition.humidity}}%</p>
+              <p class="ico icon-wind"><span class="number">{{condition.windDir}}{{condition.windLevel}}</span>级</p>
+              <p class="ico icon-humidity"><span class="number">{{condition.humidity}}%</span></p>
               <!--<p class="ico icon-pressure">{{condition.pressure || '&#45;&#45;'}} hPa</p>-->
             </div>
           </div>
@@ -96,15 +96,6 @@ export default {
     // }, 1000)
   },
   methods: {
-    showCleanWarn () {
-      clearInterval(this.Loop) // 再次清空定时器，防止重复注册定时器
-      this.Loop = setTimeout(function () {
-        console.log('使出你的绝招吧')
-      }, 5000)
-    },
-    clearLoop () {
-      clearInterval(this.Loop)
-    },
     // 获取天气
     loadWeather () {
       getWeather().then(weather => {

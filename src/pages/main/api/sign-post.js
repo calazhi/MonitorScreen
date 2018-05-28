@@ -1,4 +1,4 @@
-import Axios from '@/assets/js/axios-plugin'
+import axios from '@/assets/js/axios-plugin'
 
 // 代码提交部署时使用/scp-mapapp作上下文
 const contextPath = '/scp-guidepostcomponent'
@@ -9,7 +9,7 @@ const contextPath = '/scp-guidepostcomponent'
  * @param {obj} data
  */
 export const getCameraId = data => {
-  return Axios({
+  return axios({
     method: 'get',
     url: contextPath + '/cameraSignPostId/queryForList',
     params: data
@@ -21,7 +21,7 @@ export const getCameraId = data => {
  * @param {obj} data
  */
 export const getSignPostGroup = data => {
-  return Axios({
+  return axios({
     method: 'post',
     url: contextPath + '/screenProtect/queryDeviceScreenGroup',
     data
@@ -33,7 +33,7 @@ export const getSignPostGroup = data => {
  * @param {obj} data
  */
 export const getDeviceScreenImage = data => {
-  return Axios({
+  return axios({
     method: 'post',
     url: contextPath + '/screenProtect/queryDeviceScreenImage',
     data
@@ -45,7 +45,7 @@ export const getDeviceScreenImage = data => {
  * @param {obj} data
  */
 export const updateDeviceScreen = data => {
-  return Axios({
+  return axios({
     method: 'post',
     url: contextPath + '/screenProtect/updateDeviceScreenSet',
     data

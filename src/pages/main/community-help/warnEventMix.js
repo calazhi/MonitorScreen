@@ -1,4 +1,4 @@
-import { getSecurityDistanceList, hasPatrolSecuritys, getWarnData, hasDoneInfo, disMissWarning } from '@/pages/main/api/park-warning'
+import { getSecurityDistanceList, hasPatrolSecuritys, getWarnData, hasDoneInfo, disMissWarning, forceDeleteWarning } from '@/pages/main/api/park-warning'
 import controller from '@/pages/main/controller'
 import { mapState } from 'vuex'
 // import mutationTypes from '@/pages/main/store/mutation-types'
@@ -195,14 +195,27 @@ export default {
       this.showSelectGuards = true
     },
     // 解除预警
-    dismissWarn (eventId) {
-      if (eventId) {
-        let id = eventId
-        disMissWarning({ ids: [id] }).then(res => {
-          this.updateWarnArray([id])
-        }).catch(err => {
-          console.log(err)
-        })
+    dismissWarn (args) {
+      console.log('解除单个预警入参', args.eventId, args.forcible)
+      if (args.eventId) {
+        let id = args.eventId
+        if (args.forcible) { // 强制解除
+          forceDeleteWarning({eventId: args.eventId}).then(res => {
+            console.log('解除预警成功', res)
+            this.updateWarnArray([id])
+            this.$refs.warnList.closeForcibleDismissPop()
+          }).catch(err => {
+            this.$refs.warnList.closeForcibleDismissPop()
+            this.$refs.warnList.popError('解除预警失败')
+            console.log(err)
+          })
+        } else { // 正常解除
+          disMissWarning({ids: [id]}).then(res => {
+            this.updateWarnArray([id])
+          }).catch(err => {
+            console.log(err)
+          })
+        }
       } else {
         let ids = []
         this.secondaryWarnList.map((item, index) => {

@@ -1,7 +1,7 @@
 <template>
   <div class="item-box" :class="{'item-warning': robotStatus === false}">
     <div class="clear-confirm-box" v-show="robotStatus&&confirmDisabled">
-      <iframe frameborder="0 " class="iframe-box "></iframe>
+      <iframe frameborder="0 " class="robot-iframe-box "></iframe>
       <div data-v-c4dd6c2c="" class="bg "></div>
       <div class="con ">
         <p class="title ">确定要召回机器人吗？</p>
@@ -34,7 +34,7 @@
       <ul class="right-box" v-show="robotStatus&&workStatus">
         <li>{{robotInfo.robot}}</li>
         <li>
-          <span class="name">电&nbsp;量：</span>{{robotInfo.battery}}</li>
+          <span class="name">电&nbsp;量：</span><span class="number">{{robotInfo.battery}}</span></li>
         <li>
           <span class="name">当前状态：</span>{{robotInfo.status}}</li>
         <li>
@@ -50,9 +50,9 @@
       <ul class="right-box" v-show="robotStatus&&!workStatus">
         <li>{{robotInfo.robot}}</li>
         <li>
-          <span class="name">电&nbsp;量：</span>{{robotInfo.battery}}</li>
+          <span class="name">电&nbsp;量：</span><span class="number">{{robotInfo.battery}}</span></li>
         <li>
-          <span class="name">编&nbsp;码：</span>{{robotInfo.robot}}</li>
+          <span class="name">编&nbsp;码：</span><span class="number">{{robotInfo.robot}}</span></li>
         <li>
           <span class="name">待处理任务：</span>{{robotInfo.taskCount}}</li>
         <li>

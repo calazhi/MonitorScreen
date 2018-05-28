@@ -105,3 +105,8 @@ export const getCameraInfoData = data => {
     params: data
   })
 }
+
+// 强制解除预警
+export const forceDeleteWarning = params => {
+  return axios.post('/scp-patrolapp/patrolMessage/forceRemoveWarning', params)
+}

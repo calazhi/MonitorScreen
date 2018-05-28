@@ -57,6 +57,7 @@ export default {
     playPreview () {
       this.previewData = this.fourSplitData.map((item) => {
         return {
+          deviceIp: item.deviceIP,
           deviceID: item.deviceID,
           parentID: item.parentID,
           mediaIP: item.mediaIP,

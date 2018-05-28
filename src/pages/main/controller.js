@@ -2,7 +2,7 @@
  * 中央控制器，负责处理全局事物，以及对接ws消息，下发给组件。
  */
 
-import { loadWebsocket } from '../../websocket/index'
+import { loadWebsocket } from '@/assets/js/websocket'
 
 // 回调集
 const callbackMap = {}
@@ -72,7 +72,7 @@ function register ({key, range, points, callback}) {
  */
 function init () {
   // 加载WS， 每一个类型对应的数据都丢给对应组件去处理
-  loadWebsocket(jsonString => {
+  loadWebsocket('egscuimain').then(jsonString => {
     let data = null
     try {
       data = JSON.parse(jsonString).data
@@ -108,7 +108,7 @@ function init () {
         }
       }
     }
-  }, 'egscuimain')
+  })
 }
 
 export default {

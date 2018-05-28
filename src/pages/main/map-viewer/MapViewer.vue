@@ -5,7 +5,7 @@
       <div id="mainMap"></div>
       <p class="court-title">{{courtTitle}}</p>
       <p class="empty-tips" v-if="isEmpty===true">小区全图不存在,请先至管理端配置场景信息!</p>
-      <map-control-bar ref="controlBar" :scene-type="1" @onSceneChange="onSceneChangeHandler" @mapZoomChange="onMapZoomChangeHandler" @floorChange="onFloorChangeHandler"></map-control-bar>
+      <map-control-bar ref="controlBar" @showhidetip="showhidetip" :scene-type="1" :magnification="magnification" @onSceneChange="onSceneChangeHandler" @mapZoomChange="onMapZoomChangeHandler" @floorChange="onFloorChangeHandler"></map-control-bar>
     </div>
     <div class="btn-group">
       <button v-for="(item, index) in datalist" :key="index" :class="['btn', 'icon-'+ item.icon, item.isActived?'active':'']" type="button" :disabled="isEmpty===true" @click="onClickButtonHandler(item.icon,$event)">
@@ -17,7 +17,7 @@
 
 <script>
 import { getSceneListData, getMarkerListData, getAreaListData, LOG_TAG } from '@/pages/main/api/map-view'
-import { fixedMarkerListFormat, setMarkerMap, getMarkerMap, initAreaMap, getAreaMapByType, markerScale, initZoomLevel } from '@/pages/main/map-viewer/assets/js/util'
+import { fixedMarkerListFormat, setMarkerMap, getMarkerMap, initAreaMap, getAreaMapByType, markerScale, initZoomLevel, getMapMagnification } from '@/pages/main/map-viewer/assets/js/util'
 import MapControlBar from './MapControlBar'
 import addMarkersDialog from '@/pages/main/map-viewer/mixin/addmarkersdialog'
 import store from '@/pages/main/store'
@@ -57,11 +57,18 @@ export default {
         signpost: { name: '电子指路牌', icon: 'signpost', isActived: false },
         fence: { name: '电子围栏', icon: 'fence', isActived: false }
       },
+      showPointObj: {
+        id: null,
+        lastTime: null,
+        type: null
+      },
       defaultFloorType: 3,
       curFloorType: 3,
       buildLayerKey: '',
       maxZoom: 0,
-      minZoom: 0
+      minZoom: 0,
+      magnification: 1,
+      showhideWarnTip: false
     }
   },
   methods: {
@@ -80,13 +87,14 @@ export default {
         maxZoom: mapDetail.maxZoom, // 6
         minZoom: mapDetail.minZoom + 2, // 2
         tileMaxZoom: mapDetail.maxZoom, // 6
-        tileMinZoom: mapDetail.minZoom, // 2
+        tileMinZoom: mapDetail.minZoom, // 0
         zoom: initZoomLevel,
         controlZoom: false,
         centerGPS: [mapDetail.centerLon, mapDetail.centerLat],
         scale: mapDetail.scale,
         scaleType: mapDetail.scaleType,
-        arcAngle: mapDetail.arcAngle // 弧度值
+        arcAngle: mapDetail.arcAngle, // 弧度值
+        mapMaxResolution: mapDetail.maxResolution
       })
       this.broadBuildingZoom = mapDetail.buildingZoom
       this.broadSceneId = mapDetail.id
@@ -104,9 +112,9 @@ export default {
       this.getSecurityManyTimes()
       // 初始化地图后添加住户访客陌生人点位
       this.getMapSetting()
-      this.getAddRobotList({ sceneId: mapDetail.id })
-      this.getAddGuidepostList({ sceneId: mapDetail.id })
-      this.getAddWarnList({ sceneId: mapDetail.id })
+      this.getAddRobotList()
+      this.getAddGuidepostList()
+      this.getAddWarnList()
       // 地图上注册点击事件
       this.mapObj.regEventListener('moveend', this.onMoveendHandler)
       this.mapObj.regEventListener('singleclick', this.onClickMapHandler)
@@ -274,6 +282,30 @@ export default {
       if (this.broadArea) this.getBuildingMarkerData()
     },
     /**
+     * @description 控制显示隐藏
+     */
+    showhidetip: function (showhideTip) {
+      console.log(showhideTip)
+      this.showhideWarnTip = showhideTip
+      if (showhideTip) {
+        // 清除所有预警
+        this.mapObj.clearWarningPopup()
+      } else {
+        this.getAddWarnList()
+      }
+    },
+    /**
+     * @description 控制显示点位名称弹框
+     */
+    showViewName: function (markerInfo, duration, style) {
+      let viewPopupDetail = Object.assign({}, markerInfo)
+      this.showPointObj.id = viewPopupDetail.id
+      this.showPointObj.type = viewPopupDetail.markerType
+      this.showPointObj.lastTime = new Date().getTime()
+      viewPopupDetail.text = viewPopupDetail.markerName
+      vueData.mapObj.addViewPopup(viewPopupDetail, duration, style)
+    },
+    /**
      * 地图点击事件监听
      * @augments e
      */
@@ -303,6 +335,10 @@ export default {
           console.warn(LOG_TAG + ' your hdmap version is old, please updata')
         }
         if (['guarder', 'households', 'visitor', 'stranger'].indexOf(e.feature.markerType) !== -1) {
+          // let sty = { backgroundColor: 'red' }
+          if (e.feature.markerType === 'guarder') {
+            this.showViewName(e.feature, 5000)
+          }
           castAnimate(animatePoint, 'D').then(() => {
             // store.commit(mutationTypes.SHOW_MEMBER_INFO, sendDate)
             store.commit('sendMessage', {
@@ -311,6 +347,8 @@ export default {
             })
           })
         } else if (['control', 'brake', 'gates', 'elevator', 'camera', 'broadcast', 'robot', 'signpost', 'fence', 'lock'].indexOf(e.feature.markerType) !== -1) {
+          /* let sty = { backgroundColor: 'red' }
+          this.showViewName(e.feature, 1000, sty) */
           castAnimate(animatePoint, 'D').then(() => {
             // store.commit(mutationTypes.SHOW_DEVICE_INFO, sendDate)
             store.commit('sendMessage', {
@@ -352,6 +390,7 @@ export default {
         }
         console.log('当前  zoom = ' + zoomInt)
       }
+      this.magnification = getMapMagnification(e.zoom)
     },
     /**
      * 处理'切换园区和停车场场景'事件
@@ -371,6 +410,10 @@ export default {
         return
       }
       if (flag === 2 && curZoom <= this.minZoom) {
+        return
+      }
+      if (flag === 3) {
+        this.mapObj.setZoom(initZoomLevel)
         return
       }
       flag === 1 ? curZoom++ : curZoom--
@@ -485,5 +528,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

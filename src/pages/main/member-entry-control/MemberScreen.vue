@@ -61,6 +61,7 @@ export default {
         this.$emit('cameraCodeParams', this.cameraCodeParams)
         this.videoParams = res.map((item) => {
           return {
+            deviceIp: item.deviceIP,
             deviceID: item.subDeviceID,
             parentID: item.parentID,
             mediaIP: item.mediaIp,

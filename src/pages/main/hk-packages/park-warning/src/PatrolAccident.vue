@@ -2,7 +2,7 @@
   <div>
     <div v-show="true">
       <div class="ico-btn-group">
-        <a class="ico turn-off" @click="confirmBox"></a>
+        <!--<a class="ico turn-off" @click="confirmBox"></a>-->
         <a class="ico exit-full" @click="handleClose"></a>
       </div>
 
@@ -13,37 +13,52 @@
             <img v-if='imgPlayShow' :src="warnData.eventBody.scenePic[0]" class="pic" :onerror="errorTip">
             <video v-if='!imgPlayShow' :src="warnData.eventBody.sceneVideo" loop autoPlay="false" width="100%" height="100%" type="video/ogg" aria-label="Close" class="video-play"></video>
           </div>
-          <button type="button" class="btn cancel" @click="dispatchGuard" v-show="!dealWarnInfo">派遣保安</button>
-          <button type="button" class="btn doing" v-show="dealWarnInfo">处 理 中</button>
-        </div>
-        <ul class="right-box">
-          <li class="accident">
-            <div :native="false" :style="getHeightStyle(60)" viewClass="abnormal-event" :noresize="false" class="img-scrollbox">
-              <div>
-                <span class="name">事&nbsp;件：</span>
-                {{warnData.eventBody.eventContent}}
-              </div>
+          <div class="tabs-box">
+            <div class="tabs-btn-wrap">
+              <button class="tabs-btn active"><span class="icon-snapshot"></span>抓拍</button>
             </div>
-          </li>
-          <li>
-            <span class="name">时&nbsp;间：</span>{{formatDate(warnData.eventHeader.occurTime,'YYYY-MM-DD hh:mm:ss')}}</li>
-          <li>
-            <span class="name">地&nbsp;点：</span>{{warnData.eventBody.address}}</li>
-          <li v-if="!checkedInfo.checkedSecurity.length">
-            <span class="name" v-show="!dealWarnInfo">推荐保安：</span>
-            <span class="name" v-show="dealWarnInfo">保&nbsp;安：</span>
-            <span v-if="checkedInfo.recommedSecurity.length">{{checkedInfo.recommedSecurity[0].name}}</span>
-            <span v-else>无</span>
-            <a class="icon-send " v-if="checkedInfo.recommedSecurity.length" @click="choseDispathGuard" v-show="!dealWarnInfo" href="javascript:;"></a>
-          </li>
-          <li v-if="checkedInfo.checkedSecurity.length>0">
-            <span class="name" v-show="!dealWarnInfo">推荐保安：</span>
-            <span class="name" v-show="dealWarnInfo">保&nbsp;安：</span>
-            <span>
+            <div class="tabs-btn-wrap">
+              <button class="tabs-btn"><span class="icon-video"></span>实时监控</button>
+            </div>
+          </div>
+        </div>
+        <div class="right-box">
+          <ul>
+            <!--<li class="accident">
+              <div :native="false" :style="getHeightStyle(60)" viewClass="abnormal-event" :noresize="false" class="img-scrollbox">
+                <div>
+                  <span class="name">事&nbsp;件：</span>
+                  {{warnData.eventBody.eventContent}}
+                </div>
+              </div>
+            </li>-->
+            <li class="first-li-normal">
+              <p><span class="name">事&nbsp;件：</span>{{warnData.eventBody.eventContent}}</p>
+              <p><span class="name">时&nbsp;间：</span><span class="number">{{formatDate(warnData.eventHeader.occurTime,'YYYY-MM-DD hh:mm:ss')}}</span></p>
+              <p><span class="name">地&nbsp;点：</span>{{warnData.eventBody.address}}</p>
+            </li>
+            <li><span class="name">状&nbsp;态：</span>待处理</li>
+            <li v-if="!checkedInfo.checkedSecurity.length">
+              <span class="name" v-show="!dealWarnInfo">推荐保安：</span>
+              <span class="name" v-show="dealWarnInfo">保&nbsp;安：</span>
+              <span v-if="checkedInfo.recommedSecurity.length">{{checkedInfo.recommedSecurity[0].name}}</span>
+              <span v-else>无</span>
+              <a class="icon-send " v-if="checkedInfo.recommedSecurity.length" @click="choseDispathGuard" v-show="!dealWarnInfo" href="javascript:;"></a>
+            </li>
+            <li v-if="checkedInfo.checkedSecurity.length>0">
+              <span class="name" v-show="!dealWarnInfo">推荐保安：</span>
+              <span class="name" v-show="dealWarnInfo">保&nbsp;安：</span>
+              <span>
               <span v-for="(item,index) in checkedInfo.checkedSecurity" :key="index">{{item}} </span>
             </span>
-          </li>
-        </ul>
+            </li>
+          </ul>
+          <div class="btn-box">
+            <button type="button" class="btn cancel">解除警报</button>
+            <button type="button" class="btn confirm" @click="dispatchGuard" v-show="!dealWarnInfo">派遣保安</button>
+            <button type="button" class="btn doing" v-show="dealWarnInfo">处 理 中</button>
+          </div>
+        </div>
       </div>
       <!--解除警报-->
       <div class="detail-info-box" v-else-if="checkedInfo.imgInit">
@@ -54,7 +69,7 @@
           <button type="button" class="btn confirm" @click="dismissWarn">解除警报</button>
         </div>
         <ul class="right-box">
-          <li>
+          <li class="first-li-normal">
             <span class="name">状&nbsp;态：</span>处理完成</li>
           <li>
             <span class="name">保&nbsp;安：</span>

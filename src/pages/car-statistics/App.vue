@@ -30,12 +30,12 @@
           </div>
         </div>
         <div class="title">
-          <p>24小时出入车次</p>
+          <p><em class="num">24</em>小时出入车次</p>
           <p>
             <span class="in">
-              <i>进</i>{{inNums}}</span>
+              <i>进</i><em class="num">{{inNums}}</em></span>
             <span class="out">
-              <i>出</i>{{outNums}}</span>
+              <i>出</i><em class="num">{{outNums}}</em></span>
           </p>
         </div>
         <div class="chartCount" id='chart'></div>
@@ -48,8 +48,9 @@
 <script>
 
 import echarts from 'echarts'
-import { queryAllParkseatsCounts } from './apis/index'
-import { loadWebsocket } from '@/websocket/index'
+import { loadWebsocket } from '@/assets/js/websocket'
+import { queryAllParkseatsCounts } from './api/index'
+
 export default {
   name: 'app',
   data () {
@@ -69,13 +70,16 @@ export default {
   mounted () {
     // this.draw('parking-rate', 10, '#2d2260')
     this.queryAllParkseatsCounts()
-    loadWebsocket(
-      this.onWebsocketMessageReceived, 'egscuicarstatistics'
-    )
+
+    // 启动 websocket
+    loadWebsocket('egscuicarstatistics').then(this.onWebsocketMessageReceived)
+
     // 获取下一个2小时整点
     this.getNextTwoHours()
+
     // 动态获取x轴数组
     this.getXaxisHours()
+
     // 生成报表
     setTimeout(() => {
       this.initEchart()
@@ -136,25 +140,21 @@ export default {
       console.log(this.xHours)
       this.queryAllParkseatsCounts()
     },
-    onWebsocketMessageReceived (data) {
+    onWebsocketMessageReceived (json) {
+      let data = null
       try {
-        let subData = JSON.parse(data).data
-        console.log(subData)
-        let type = subData.type
-        console.log(type)
-        if (type === '00015') {
-          // 人员统计
-          console.log(subData.info)
-          // let info = JSON.stringify(subData.info)
-          let info = this.eval(subData.info)
-          if (info !== undefined) {
-            console.log(info)
-            this.initData(info)
-            this.fillData()
-          }
-        }
+        data = JSON.parse(json).data
       } catch (e) {
-        console.warn(e)
+        console.error(e)
+      }
+      if (data.type === '00015') {
+        // 人员统计
+        // let info = JSON.stringify(subData.info)
+        let info = this.eval(data.info)
+        if (info !== undefined) {
+          this.initData(info)
+          this.fillData()
+        }
       }
     },
     // 代替eval的方法
@@ -197,7 +197,7 @@ export default {
 
       // 数字
       cxt.fillStyle = '#fff'
-      cxt.font = '80px Microsoft YaHei'
+      cxt.font = '80px thiely1h'
       let textWidth1 = cxt.measureText(per + '%').width
       cxt.fillText(per + '%', radius - textWidth1 / 2, radius)
 
@@ -280,7 +280,7 @@ export default {
           axisLabel: {
             fontSize: '20' * per,
             color: '#858096',
-            fontFamily: 'Microsoft YaHei',
+            fontFamily: 'thiely1h',
             margin: 10
           },
           axisPointer: {
@@ -314,7 +314,7 @@ export default {
           axisLabel: {
             fontSize: '20' * per,
             color: '#858096',
-            fontFamily: 'Microsoft YaHei',
+            fontFamily: 'thiely1h',
             align: 'left',
             margin: '20' * per * 2.8
           },
@@ -409,6 +409,10 @@ export default {
   /* color: rgba(255, 255, 255, .8); */
 }
 
+.car-statistics .title .num {
+  font-family: "thiely1h";
+}
+
 .car-statistics .title p:first-child {
   color: #ceccd5;
 }
@@ -478,6 +482,7 @@ export default {
 
 .car-statistics .parking-info .num {
   font-size: 3rem;
+  font-family: "thiely1h";
 }
 
 .car-statistics .parking-info .slash {
@@ -491,6 +496,7 @@ export default {
 
 .car-statistics .parking-item .num {
   font-size: 3rem;
+  font-family: "thiely1h";
 }
 
 .car-statistics .parking-item .note {

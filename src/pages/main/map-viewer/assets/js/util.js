@@ -209,6 +209,10 @@ const getdeviceFormCode = function (code) {
   return device
 }
 
+const getMapMagnification = function (zoomLevel) {
+  return Number((Math.pow(2, zoomLevel) / Math.pow(2, initZoomLevel)).toFixed(1))
+}
+
 export {
   initAreaMap, // 将area的接口返回数据格式化,并根据areaType分类缓存至areaMap
   getAreaMapByType, // 根据areaType从areaMap中获取对应的areaList
@@ -217,5 +221,6 @@ export {
   fixedMarkerListFormat, // 将marker的接口返回数据格式化,返回可以在地图上加载的markerList
   markerScale, // 通用缩放比例设定,用于点位加载时,将图片缩放至可显示大小
   initZoomLevel,
-  getdeviceFormCode
+  getdeviceFormCode,
+  getMapMagnification // 获取地图放大倍数
 }

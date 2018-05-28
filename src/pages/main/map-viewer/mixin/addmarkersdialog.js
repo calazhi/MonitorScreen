@@ -23,7 +23,10 @@ import icoGatesAbnormal from '@/pages/main/map-viewer/assets/images/ico_gates_ab
 import icoBrakeAbnormal from '@/pages/main/map-viewer/assets/images/ico_brake_abnormal.png'
 import icoControlAbnormal from '@/pages/main/map-viewer/assets/images/ico_control_abnormal.png'
 import icoElevatorAbnormal from '@/pages/main/map-viewer/assets/images/ico_elevator_abnormal.png'
-import { markerScale, getdeviceFormCode } from '@/pages/main/map-viewer/assets/js/util'
+import {
+  markerScale,
+  getdeviceFormCode
+} from '@/pages/main/map-viewer/assets/js/util'
 import {
   getSecurityListData,
   getHouseholdVisitorStrangerData,
@@ -71,7 +74,9 @@ const expressRobots = {
      */
     getSecurityManyTimes () {
       this.getSecurityList({ isOnLine: 1 })
-      this.getSecurityManyTime = setInterval(() => { this.getSecurityList({ isOnLine: 1 }) }, 10 * 1000)
+      this.getSecurityManyTime = setInterval(() => {
+        this.getSecurityList({ isOnLine: 1 })
+      }, 10 * 1000)
     },
     /**
      * @description
@@ -101,8 +106,13 @@ const expressRobots = {
       for (let j = 0; j < markerList.length; j++) {
         if (markerList[j].longitude && markerList[j].latitude) {
           // 将点位的GPS坐标转换后设为点位坐标
-          let securityPositionGPS = [markerList[j].longitude, markerList[j].latitude]
-          let securityPositionXY = tempParam.mapObj.transfromWGSToBitMap(securityPositionGPS)
+          let securityPositionGPS = [
+            markerList[j].longitude,
+            markerList[j].latitude
+          ]
+          let securityPositionXY = tempParam.mapObj.transfromWGSToBitMap(
+            securityPositionGPS
+          )
           let marker = {}
           marker.id = markerList[j].userId
           marker.markerType = 'guarder'
@@ -111,7 +121,15 @@ const expressRobots = {
           marker.imgUrl = icoSecurityNormal
           marker.info = markerList[j]
           // 添加的点位
-          markerList[j].userId && tempParam.mapObj.addMarker(marker, markerScale)
+          markerList[j].userId &&
+            tempParam.mapObj.addMarker(marker, markerScale)
+          if (this.showPointObj.id === marker.id) {
+            let nowTime = new Date().getTime()
+            let timeDiff = nowTime - this.showPointObj.lastTime
+            if (timeDiff < 5000) {
+              this.mapObj.addViewPopup(marker, timeDiff)
+            }
+          }
         }
       }
       !this.datalist['guarder'].isActived && this.mapObj.hideMarkers('guarder')
@@ -126,16 +144,17 @@ const expressRobots = {
       } else {
         durationTime = { duration: 15 * 1000 }
       }
-      getHouseholdVisitorStrangerData(durationTime).then(res => {
-        // console.log('获取住户访客陌生人点位', res)
-        tempParam.mapObj.removeLayerByLayerKey('householdsLayer')
-        tempParam.mapObj.removeLayerByLayerKey('visitorLayer')
-        tempParam.mapObj.removeLayerByLayerKey('strangerLayer')
-        if (res.length === 0) {
-          return
-        }
-        this.addHouseholdVisitorStrangerMarkers(res)
-      })
+      getHouseholdVisitorStrangerData(durationTime)
+        .then(res => {
+          // console.log('获取住户访客陌生人点位', res)
+          tempParam.mapObj.removeLayerByLayerKey('householdsLayer')
+          tempParam.mapObj.removeLayerByLayerKey('visitorLayer')
+          tempParam.mapObj.removeLayerByLayerKey('strangerLayer')
+          if (res.length === 0) {
+            return
+          }
+          this.addHouseholdVisitorStrangerMarkers(res)
+        })
         .catch(err => {
           console.warn(err)
         })
@@ -144,19 +163,32 @@ const expressRobots = {
      * @description 从接口中请求查询人员列表轮询时间和更新时间
      */
     getMapSetting: function () {
-      getMapSettingData({ configType: '2' }).then(res => {
-        // console.log(res)
-        if (res instanceof Array && res[0].configName === 'search_interval' && res[1].configName === 'search_range') {
-          tempParam.getHouseholdVisitorStrangerList({ duration: res[1].configValue * 1000 })
-          tempParam.setIntervalPeople(res[0].configValue, res[1].configValue)
-        } else if (res instanceof Array && res[1].configName === 'search_interval' && res[0].configName === 'search_range') {
-          tempParam.getHouseholdVisitorStrangerList({ duration: res[0].configValue * 1000 })
-          tempParam.setIntervalPeople(res[1].configValue, res[0].configValue)
-        } else {
-          tempParam.getHouseholdVisitorStrangerList()
-          tempParam.setIntervalPeople()
-        }
-      })
+      getMapSettingData({ configType: '2' })
+        .then(res => {
+          // console.log(res)
+          if (
+            res instanceof Array &&
+            res[0].configName === 'search_interval' &&
+            res[1].configName === 'search_range'
+          ) {
+            tempParam.getHouseholdVisitorStrangerList({
+              duration: res[1].configValue * 1000
+            })
+            tempParam.setIntervalPeople(res[0].configValue, res[1].configValue)
+          } else if (
+            res instanceof Array &&
+            res[1].configName === 'search_interval' &&
+            res[0].configName === 'search_range'
+          ) {
+            tempParam.getHouseholdVisitorStrangerList({
+              duration: res[0].configValue * 1000
+            })
+            tempParam.setIntervalPeople(res[1].configValue, res[0].configValue)
+          } else {
+            tempParam.getHouseholdVisitorStrangerList()
+            tempParam.setIntervalPeople()
+          }
+        })
         .catch(err => {
           tempParam.getHouseholdVisitorStrangerList()
           tempParam.setIntervalPeople()
@@ -164,7 +196,9 @@ const expressRobots = {
         })
     },
     setIntervalPeople (searchInterval, searchRange) {
-      if (this.requestpeople) { tempParam.clearPeople() }
+      if (this.requestpeople) {
+        tempParam.clearPeople()
+      }
       let interval = searchInterval || 10
       let range = searchRange || 15
       this.requestpeople = setInterval(() => {
@@ -218,12 +252,22 @@ const expressRobots = {
           name = '未登记'
           break
       }
-      if (markerInfo.eventGPS && markerInfo.eventGPS.lon && markerInfo.eventGPS.lat) {
+      if (
+        markerInfo.eventGPS &&
+        markerInfo.eventGPS.lon &&
+        markerInfo.eventGPS.lat
+      ) {
         // 将住户访客陌生人的GPS坐标转换后设为坐标
-        let householdVisitorStrangerPositionGPS = [markerInfo.eventGPS.lon, markerInfo.eventGPS.lat]
-        let householdVisitorStrangerPositionXY = tempParam.mapObj.transfromWGSToBitMap(householdVisitorStrangerPositionGPS)
+        let householdVisitorStrangerPositionGPS = [
+          markerInfo.eventGPS.lon,
+          markerInfo.eventGPS.lat
+        ]
+        let householdVisitorStrangerPositionXY = tempParam.mapObj.transfromWGSToBitMap(
+          householdVisitorStrangerPositionGPS
+        )
         let marker = {}
-        marker.id = (markerInfo.userType === '4') ? markerInfo.eventId : markerInfo.userId
+        marker.id =
+          markerInfo.userType === '4' ? markerInfo.eventId : markerInfo.userId
         marker.markerType = type
         marker.position = householdVisitorStrangerPositionXY
         marker.imgUrl = icon
@@ -237,34 +281,43 @@ const expressRobots = {
      * @description 获取快递机器人点位信息并添加机器人点位
      */
     getAddRobotList: function (param) {
-      getRobotData(param).then(res => {
-        // console.log(res)
-        tempParam.addRobotMarker(res)
-      })
+      getRobotData(param)
+        .then(res => {
+          // console.log(res)
+          tempParam.addRobotMarker(res)
+        })
         .catch(err => {
           console.warn(err)
         })
     },
     addRobotMarker: function (markerList) {
       tempParam.mapObj.removeLayerByLayerKey('robotLayer')
-      if (tempParam.mapObj.mapConfig.scaleType === 1 || tempParam.mapObj.mapConfig.scaleType === '1') {
+      if (
+        tempParam.mapObj.mapConfig.scaleType === 1 ||
+        tempParam.mapObj.mapConfig.scaleType === '1'
+      ) {
         for (let j = 0; j < markerList.length; j++) {
           if (markerList[j].lon && markerList[j].lat) {
             // 将点位的GPS坐标转换后设为点位坐标
             let robotPositionGPS = [markerList[j].lon, markerList[j].lat]
-            let robotPositionXY = tempParam.mapObj.transfromWGSToBitMap(robotPositionGPS)
+            let robotPositionXY = tempParam.mapObj.transfromWGSToBitMap(
+              robotPositionGPS
+            )
             let marker = {}
             marker.id = markerList[j].robot
             marker.position = robotPositionXY
             marker.markerType = 'robot'
             marker.markerName = markerList[j].robot
-            marker.imgUrl = (markerList[j].error === 'E00') ? icoRobotNormal : icoRobotAbnormal
-            marker.markerStatus = (markerList[j].error === 'E00') ? 101 : 102
+            marker.imgUrl =
+              markerList[j].error === 'E00' ? icoRobotNormal : icoRobotAbnormal
+            marker.markerStatus = markerList[j].error === 'E00' ? 101 : 102
             marker.info = markerList[j]
             // 添加的点位
-            markerList[j].robot && tempParam.mapObj.addMarker(marker, markerScale)
+            markerList[j].robot &&
+              tempParam.mapObj.addMarker(marker, markerScale)
           }
-          !tempParam.datalist['robot'].isActived && tempParam.mapObj.hideMarkers('robot')
+          !tempParam.datalist['robot'].isActived &&
+            tempParam.mapObj.hideMarkers('robot')
         }
       }
     },
@@ -272,11 +325,12 @@ const expressRobots = {
      * @description 获取电子指路牌点位信息并添加指路牌点位
      */
     getAddGuidepostList: function (param) {
-      getGuidepostData(param).then(res => {
-        // console.log('指路牌' + res)
-        let markerList = JSON.parse(res.info)
-        tempParam.addGuidepostMarker(markerList)
-      })
+      getGuidepostData(param)
+        .then(res => {
+          // console.log('指路牌' + res)
+          let markerList = JSON.parse(res.info)
+          tempParam.addGuidepostMarker(markerList)
+        })
         .catch(err => {
           console.warn(err)
         })
@@ -286,25 +340,38 @@ const expressRobots = {
      */
     addGuidepostMarker: function (markerList) {
       tempParam.mapObj.removeLayerByLayerKey('signpostLayer')
-      if (tempParam.mapObj.mapConfig.scaleType === 1 || tempParam.mapObj.mapConfig.scaleType === '1') {
+      if (
+        tempParam.mapObj.mapConfig.scaleType === 1 ||
+        tempParam.mapObj.mapConfig.scaleType === '1'
+      ) {
         tempParam.guidepostList = markerList
         for (let j = 0; j < markerList.length; j++) {
           if (markerList[j].lon && markerList[j].lat) {
             // 将点位的GPS坐标转换后设为点位坐标
-            let guidepostPositionGPS = [Number(markerList[j].lon), Number(markerList[j].lat)]
-            let guidepostPositionXY = tempParam.mapObj.transfromWGSToBitMap(guidepostPositionGPS)
+            let guidepostPositionGPS = [
+              Number(markerList[j].lon),
+              Number(markerList[j].lat)
+            ]
+            let guidepostPositionXY = tempParam.mapObj.transfromWGSToBitMap(
+              guidepostPositionGPS
+            )
             // 添加的点位
             let marker = {}
             marker.id = markerList[j].cellid + markerList[j].addrid
             marker.position = guidepostPositionXY
             marker.markerType = 'signpost'
-            marker.imgUrl = (markerList[j].status === '1') ? icoSignpostNormal : icoSignpostAbnormal
-            marker.markerStatus = (markerList[j].status === '1') ? 101 : 102
+            marker.imgUrl =
+              markerList[j].status === '1'
+                ? icoSignpostNormal
+                : icoSignpostAbnormal
+            marker.markerStatus = markerList[j].status === '1' ? 101 : 102
             marker.info = markerList[j]
             marker.markerName = '电子指路牌'
-            markerList[j].cellid && tempParam.mapObj.addMarker(marker, markerScale)
+            markerList[j].cellid &&
+              tempParam.mapObj.addMarker(marker, markerScale)
           }
-          !tempParam.datalist['signpost'].isActived && tempParam.mapObj.hideMarkers('signpost')
+          !tempParam.datalist['signpost'].isActived &&
+            tempParam.mapObj.hideMarkers('signpost')
         }
       }
     },
@@ -373,40 +440,50 @@ const expressRobots = {
      */
     changeWarningMessageCount: function (flag) {
       if (flag === 1) {
-        tempParam.$store.commit('setSceneMessage', { type: 'primary_danger', count: tempParam.count1 })
+        tempParam.$store.commit('setSceneMessage', {
+          type: 'primary_danger',
+          count: tempParam.count1
+        })
       } else {
-        tempParam.$store.commit('setSceneMessage', { type: 'second_warn', count: tempParam.count2 })
+        tempParam.$store.commit('setSceneMessage', {
+          type: 'second_warn',
+          count: tempParam.count2
+        })
       }
     },
     /**
      * @description 获取报警点位
      */
     getAddWarnList: function (param) {
-      getWarnData(param).then(res => {
-        // console.log('预警点', res)
-        let markerList = res
-        if (res.length === 0) {
-          return
-        }
-        for (let j = 0; j < markerList.length; j++) {
-          let markerInfo = markerList[j].eventHeader
-          let markerTextAndtype = tempParam.getEventContent(markerInfo.eventType, markerList[j])
-          if (!markerTextAndtype) {
+      getWarnData(param)
+        .then(res => {
+          // console.log('预警点', res)
+          let markerList = res
+          if (res.length === 0) {
             return
           }
-          try {
-            if (markerInfo.eventType === '40020') {
-              tempParam.seeAndCallWarn(markerInfo, markerList[j])
+          for (let j = 0; j < markerList.length; j++) {
+            let markerInfo = markerList[j].eventHeader
+            let markerTextAndtype = tempParam.getEventContent(
+              markerInfo.eventType,
+              markerList[j]
+            )
+            if (!markerTextAndtype) {
               return
             }
-            tempParam.addWsWarnMarker(markerInfo, markerList[j])
-          } catch (err) {
-            console.warn(err)
+            try {
+              if (markerInfo.eventType === '40020') {
+                tempParam.seeAndCallWarn(markerInfo, markerList[j])
+                return
+              }
+              tempParam.addWsWarnMarker(markerInfo, markerList[j])
+            } catch (err) {
+              console.warn(err)
+            }
           }
-        }
-        tempParam.changeWarningMessageCount(1) // 更新‘一级警报’数目事件
-        tempParam.changeWarningMessageCount(2) // 更新‘二级警报’数目事件
-      })
+          tempParam.changeWarningMessageCount(1) // 更新‘一级警报’数目事件
+          tempParam.changeWarningMessageCount(2) // 更新‘二级警报’数目事件
+        })
         .catch(err => {
           console.warn(err)
         })
@@ -476,13 +553,24 @@ const expressRobots = {
      * @description 添加报警点
      */
     addWsWarnMarker: function (marker, message) {
-      let markerTextAndtype = tempParam.getEventContent(marker.eventType, message)
-      markerTextAndtype.status === 'danger' ? tempParam.count1++ : tempParam.count2++ // 统计警报数目
+      let markerTextAndtype = tempParam.getEventContent(
+        marker.eventType,
+        message
+      )
+      markerTextAndtype.status === 'danger'
+        ? tempParam.count1++
+        : tempParam.count2++ // 统计警报数目
       if (marker.eventGPS && marker.eventGPS.lon && marker.eventGPS.lat) {
         // 将点位的GPS坐标转换后设为点位坐标
-        let warnPositionXY = tempParam.mapObj.transfromWGSToBitMap([marker.eventGPS.lon, marker.eventGPS.lat])
+        let warnPositionXY = tempParam.mapObj.transfromWGSToBitMap([
+          marker.eventGPS.lon,
+          marker.eventGPS.lat
+        ])
         try {
-          if (tempParam.mapObj.isInTileMapViewArea && !tempParam.mapObj.isInTileMapViewArea(warnPositionXY)) {
+          if (
+            tempParam.mapObj.isInTileMapViewArea &&
+            !tempParam.mapObj.isInTileMapViewArea(warnPositionXY)
+          ) {
             return
           }
           // 添加的点位
@@ -493,7 +581,10 @@ const expressRobots = {
           markerInfo.type = markerTextAndtype.status
           markerInfo.markerType = marker.eventType
           markerInfo.info = message
-          marker.eventId && tempParam.mapObj.addWarningPopup(markerInfo)
+          // console.log(tempParam.showhideWarnTip)
+          !tempParam.showhideWarnTip &&
+            marker.eventId &&
+            tempParam.mapObj.addWarningPopup(markerInfo)
         } catch (err) {
           console.log(err)
         }
@@ -506,14 +597,23 @@ const expressRobots = {
       if (!message.eventHeader.deviceId) {
         return
       }
-      let elevatorMarkerInfoAnother = await getMarkerInfoData({ deviceId: message.eventHeader.deviceId }).then(res => {
+      let elevatorMarkerInfoAnother = await getMarkerInfoData({
+        deviceId: message.eventHeader.deviceId
+      }).then(res => {
         return res
       })
       if (elevatorMarkerInfoAnother && elevatorMarkerInfoAnother.length > 0) {
         if (elevatorMarkerInfoAnother instanceof Array) {
           for (let i = 0; i < elevatorMarkerInfoAnother.length; i++) {
-            if (elevatorMarkerInfoAnother[i].sceneId === tempParam.broadSceneId) {
-              tempParam.equipmentFailure(elevatorMarkerInfoAnother[i], type, img, status)
+            if (
+              elevatorMarkerInfoAnother[i].sceneId === tempParam.broadSceneId
+            ) {
+              tempParam.equipmentFailure(
+                elevatorMarkerInfoAnother[i],
+                type,
+                img,
+                status
+              )
             }
           }
         }
@@ -527,7 +627,10 @@ const expressRobots = {
       elevatorMarkerInfoAnother.imgUrl = img
       elevatorMarkerInfoAnother.markerType = type
       elevatorMarkerInfoAnother.markerStatus = status
-      elevatorMarkerInfoAnother.position = [elevatorMarkerInfoAnother.positionX, elevatorMarkerInfoAnother.positionY]
+      elevatorMarkerInfoAnother.position = [
+        elevatorMarkerInfoAnother.positionX,
+        elevatorMarkerInfoAnother.positionY
+      ]
       delete elevatorMarkerInfoAnother.positionX
       delete elevatorMarkerInfoAnother.positionY
       tempParam.mapObj.updateMarker(elevatorMarkerInfoAnother, markerScale)
@@ -539,14 +642,22 @@ const expressRobots = {
       if (!message.eventHeader.deviceId) {
         return
       }
-      let elevatorMarkerInfoAnother = await getMarkerInfoData({ deviceId: message.eventHeader.deviceId }).then(res => {
+      let elevatorMarkerInfoAnother = await getMarkerInfoData({
+        deviceId: message.eventHeader.deviceId
+      }).then(res => {
         return res
       })
       if (elevatorMarkerInfoAnother && elevatorMarkerInfoAnother.length > 0) {
         if (elevatorMarkerInfoAnother instanceof Array) {
           for (let i = 0; i < elevatorMarkerInfoAnother.length; i++) {
-            if (elevatorMarkerInfoAnother[i].sceneId === tempParam.broadSceneId) {
-              tempParam.seeAndCallWarnMarker(markerInfo, elevatorMarkerInfoAnother[i], message)
+            if (
+              elevatorMarkerInfoAnother[i].sceneId === tempParam.broadSceneId
+            ) {
+              tempParam.seeAndCallWarnMarker(
+                markerInfo,
+                elevatorMarkerInfoAnother[i],
+                message
+              )
             }
           }
         }
@@ -554,8 +665,14 @@ const expressRobots = {
         if (markerInfo.eventGPS.lon && markerInfo.eventGPS.lat) {
           let marker = {}
           marker.id = markerInfo.eventId
-          let warnPositionXY = tempParam.mapObj.transfromWGSToBitMap([markerInfo.eventGPS.lon, markerInfo.eventGPS.lat])
-          if (tempParam.mapObj.isInTileMapViewArea && !tempParam.mapObj.isInTileMapViewArea(warnPositionXY)) {
+          let warnPositionXY = tempParam.mapObj.transfromWGSToBitMap([
+            markerInfo.eventGPS.lon,
+            markerInfo.eventGPS.lat
+          ])
+          if (
+            tempParam.mapObj.isInTileMapViewArea &&
+            !tempParam.mapObj.isInTileMapViewArea(warnPositionXY)
+          ) {
             return
           }
           marker.position = warnPositionXY
@@ -563,25 +680,40 @@ const expressRobots = {
           marker.type = 'warn'
           marker.markerType = markerInfo.eventType
           marker.info = message
-          markerInfo.eventId && tempParam.mapObj.addWarningPopup(marker)
+          !tempParam.showhideWarnTip &&
+            markerInfo.eventId &&
+            tempParam.mapObj.addWarningPopup(marker)
         }
       }
     },
     /**
      * @description 添加可视呼叫点位
      */
-    seeAndCallWarnMarker: function (markerInfo, elevatorMarkerInfoAnother, message, position) {
+    seeAndCallWarnMarker: function (
+      markerInfo,
+      elevatorMarkerInfoAnother,
+      message,
+      position
+    ) {
       let marker = {}
       marker.id = markerInfo.eventId
-      marker.position = [elevatorMarkerInfoAnother.positionX, elevatorMarkerInfoAnother.positionY]
-      if (tempParam.mapObj.isInTileMapViewArea && !tempParam.mapObj.isInTileMapViewArea(marker.position)) {
+      marker.position = [
+        elevatorMarkerInfoAnother.positionX,
+        elevatorMarkerInfoAnother.positionY
+      ]
+      if (
+        tempParam.mapObj.isInTileMapViewArea &&
+        !tempParam.mapObj.isInTileMapViewArea(marker.position)
+      ) {
         return
       }
       marker.text = tempParam.judgeCallType(message.eventBody)
       marker.type = 'warn'
       marker.markerType = markerInfo.eventType
       marker.info = message
-      markerInfo.eventId && tempParam.mapObj.addWarningPopup(marker)
+      !tempParam.showhideWarnTip &&
+        markerInfo.eventId &&
+        tempParam.mapObj.addWarningPopup(marker)
     },
     judgeCallType: function (eventBody) {
       let text = ''
@@ -642,7 +774,8 @@ const expressRobots = {
           markerInfo.id = markerInfo.eventId
           if (markerInfo.eventStatus === '4') {
             if (tempParam.count1 > 0) tempParam.count1--
-            markerInfo.eventId && tempParam.mapObj.removeWarningPopup(markerInfo.id)
+            markerInfo.eventId &&
+              tempParam.mapObj.removeWarningPopup(markerInfo.id)
           } else if (markerInfo.eventStatus === '99') {
             tempParam.addWsWarnMarker(markerInfo, message)
           }
@@ -657,7 +790,8 @@ const expressRobots = {
           markerInfo.id = markerInfo.eventId
           if (markerInfo.eventStatus === '4') {
             if (tempParam.count2 > 0) tempParam.count2--
-            markerInfo.eventId && tempParam.mapObj.removeWarningPopup(markerInfo.id)
+            markerInfo.eventId &&
+              tempParam.mapObj.removeWarningPopup(markerInfo.id)
           } else if (markerInfo.eventStatus === '99') {
             tempParam.addWsWarnMarker(markerInfo, message)
           }
@@ -709,9 +843,12 @@ const expressRobots = {
         case '20114':
           // 摄像机人脸检测20113 摄像机人脸识别20114 门禁人脸抓拍记录30023
           tempParam.addHouseholdVisitorStrangerMarker(message)
-          !tempParam.datalist['households'].isActived && tempParam.mapObj.hideMarkers('households')
-          !tempParam.datalist['visitor'].isActived && tempParam.mapObj.hideMarkers('visitor')
-          !tempParam.datalist['stranger'].isActived && tempParam.mapObj.hideMarkers('stranger')
+          !tempParam.datalist['households'].isActived &&
+            tempParam.mapObj.hideMarkers('households')
+          !tempParam.datalist['visitor'].isActived &&
+            tempParam.mapObj.hideMarkers('visitor')
+          !tempParam.datalist['stranger'].isActived &&
+            tempParam.mapObj.hideMarkers('stranger')
           // console.log('人员')
           break
         case '91105':
@@ -723,54 +860,116 @@ const expressRobots = {
         case '90010':
           // console.log('设备故障')
           let device = getdeviceFormCode(message.eventBody.deviceType)
-          let isDeviceNormal = (message.eventBody.device_status === true || message.eventBody.device_status === 'true')
+          let isDeviceNormal =
+            message.eventBody.device_status === true ||
+            message.eventBody.device_status === 'true'
           switch (device) {
             case 'camera':
               // 摄像头
               if (isDeviceNormal) {
-                tempParam.getequipmentMarker(message, 'camera', icoCameraNormal, 101)
+                tempParam.getequipmentMarker(
+                  message,
+                  'camera',
+                  icoCameraNormal,
+                  101
+                )
               } else {
-                tempParam.getequipmentMarker(message, 'camera', icoCameraAbnormal, 102)
+                tempParam.getequipmentMarker(
+                  message,
+                  'camera',
+                  icoCameraAbnormal,
+                  102
+                )
               }
               break
             case 'broadcast':
               // 广播
               if (isDeviceNormal) {
-                tempParam.getequipmentMarker(message, 'broadcast', icoBroadCastNormal, 201)
+                tempParam.getequipmentMarker(
+                  message,
+                  'broadcast',
+                  icoBroadCastNormal,
+                  201
+                )
               } else {
-                tempParam.getequipmentMarker(message, 'broadcast', icoBroadCastAbnormal, 202)
+                tempParam.getequipmentMarker(
+                  message,
+                  'broadcast',
+                  icoBroadCastAbnormal,
+                  202
+                )
               }
               break
             case 'gates':
               // 人行道闸
               if (isDeviceNormal) {
-                tempParam.getequipmentMarker(message, 'gates', icoGatesNormal, 401)
+                tempParam.getequipmentMarker(
+                  message,
+                  'gates',
+                  icoGatesNormal,
+                  401
+                )
               } else {
-                tempParam.getequipmentMarker(message, 'gates', icoGatesAbnormal, 402)
+                tempParam.getequipmentMarker(
+                  message,
+                  'gates',
+                  icoGatesAbnormal,
+                  402
+                )
               }
               break
             case 'brake':
               // 车闸
               if (isDeviceNormal) {
-                tempParam.getequipmentMarker(message, 'brake', icoBrakeNormal, 501)
+                tempParam.getequipmentMarker(
+                  message,
+                  'brake',
+                  icoBrakeNormal,
+                  501
+                )
               } else {
-                tempParam.getequipmentMarker(message, 'brake', icoBrakeAbnormal, 502)
+                tempParam.getequipmentMarker(
+                  message,
+                  'brake',
+                  icoBrakeAbnormal,
+                  502
+                )
               }
               break
             case 'control':
               // 门禁
               if (isDeviceNormal) {
-                tempParam.getequipmentMarker(message, 'control', icoControlNormal, 601)
+                tempParam.getequipmentMarker(
+                  message,
+                  'control',
+                  icoControlNormal,
+                  601
+                )
               } else {
-                tempParam.getequipmentMarker(message, 'control', icoControlAbnormal, 602)
+                tempParam.getequipmentMarker(
+                  message,
+                  'control',
+                  icoControlAbnormal,
+                  602
+                )
               }
               break
             case 'elevator':
               // 电梯
               if (isDeviceNormal) {
-                tempParam.getequipmentMarker(message, 'elevator', icoElevatorNormal, 801)
+                tempParam.getequipmentMarker(
+                  message,
+                  'elevator',
+                  icoElevatorNormal,
+                  801
+                )
               } else {
-                tempParam.getequipmentMarker(message, 'elevator', icoElevatorAbnormal, 802)
+                tempParam.getequipmentMarker(
+                  message,
+                  'elevator',
+                  icoElevatorAbnormal,
+                  802
+                )
               }
               break
           }

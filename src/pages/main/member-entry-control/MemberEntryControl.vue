@@ -1,7 +1,7 @@
 <template>
   <!-- 人员管理 -->
   <div class="item-box member-entry-box">
-    <div class="hd" @click="openCleanWarnTip">人员出入</div>
+    <div class="hd" @contextmenu="openCleanWarnTip" @dblclick="openCleanWarnTip">人员出入</div>
     <div class="bd">
       <div class="view-wrap">
         <!-- <div class="view-list"> -->
@@ -216,6 +216,7 @@ export default {
     // 打开清除预警窗口
     openCleanWarnTip () {
       console.log('双击事件')
+      this.$root.Bus.$emit('showCleanWarn')
     }
   }
 }

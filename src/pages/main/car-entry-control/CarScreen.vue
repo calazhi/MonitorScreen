@@ -51,9 +51,10 @@ export default {
      */
     getVideoParams () {
       getVideoInfo().then(res => {
-        console.log('获取到的视频设备信息res' + JSON.stringify(res))
+        // console.log('获取到的视频设备信息res=' + JSON.stringify(res))
         this.videoParams = res.map((item) => {
           return {
+            deviceIp: item.deviceIP,
             deviceID: item.deviceId,
             parentID: item.parentId,
             mediaIP: item.mediaIP,
@@ -61,7 +62,10 @@ export default {
             streamProfile: 1
           }
         })
-        console.log('转换后的视频设备参数videoParams' + JSON.stringify(this.videoParams))
+        if (this.videoParams && this.videoParams.length > 4) { // 视频设备大于4个时默认取前4个，如果超长会造成视频频繁自动切换
+          this.videoParams = this.videoParams.slice(0, 4)
+        }
+        console.log('转换后的视频设备参数videoParams=' + JSON.stringify(this.videoParams))
         setTimeout(() => {
           this.$nextTick(() => {
             this.playPreview()

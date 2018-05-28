@@ -4,7 +4,7 @@
     <div class="select-guards-box">
       <a class="icon-return" href="javascript:void(0);" @click="fnClose"></a>
       <p class="title">
-        <span class="name">{{info.name}}</span>已分配{{info.taskNum}}个任务
+        <span class="name">{{info.name}}</span>已分配<span class="number">{{info.taskNum}}</span>个任务
       </p>
       <div class="guards-list-box" v-if="!nonTaskWork">
         <slider v-show="eventList.length" ref="slider" :paddingRight="paddingRight" :loading="loading">
@@ -18,7 +18,7 @@
                 <p>
                   <b>事件：</b>{{JSONParse(item.eventBody).eventDescription}}</p>
                 <p>
-                  <b>时间：</b>{{item.eventHeader.occurTime | fmtDate}}</p>
+                  <b>时间：</b><span class="number">{{item.eventHeader.occurTime | fmtDate}}</span></p>
                 <p>
                   <b>地点：</b>{{JSONParse(item.eventBody).address}}</p>
               </div>

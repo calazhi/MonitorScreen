@@ -17,21 +17,25 @@
       </div>-->
       <!-- 月保车 -->
       <ul class="right-box" v-if="car.carType === 1 || car.carType === 2">
-        <li><span class="name">{{car.carNo || '无'}}</span></li>
-        <li><span class="name">车辆类型：</span>{{formatCarType(car.carType)}}</li>
-        <li><span class="name">车&nbsp;主：</span>{{car.ownerName || '无'}}</li>
-        <li><span class="name">电&nbsp;话：</span>{{car.phone || '无'}}</li>
-        <li><span class="name">地&nbsp;址：</span>{{car.address || '无'}}</li>
-        <li><span class="name">到期时间：</span>{{formatExpireDate(car.expireTime) || '无'}}</li>
+        <li class="first-li"><span class="name">{{car.carNo || '无'}}</span></li>
+        <li class="second-li">
+          <p><span class="name">车辆类型：</span>{{formatCarType(car.carType)}}</p>
+          <p><span class="name">车&nbsp;主：</span>{{car.ownerName || '无'}}</p>
+          <p><span class="name">电&nbsp;话：</span><span class="number">{{car.phone || '无'}}</span></p>
+          <p><span class="name">地&nbsp;址：</span><span class="number">{{car.address || '无'}}</span></p>
+          <p><span class="name">到期时间：</span><span class="number">{{formatExpireDate(car.expireTime) || '无'}}</span></p>
+        </li>
       </ul>
       <!-- 临停车 -->
       <ul class="right-box" v-else>
-        <li><span class="name">{{car.carNo || '无'}}</span></li>
-        <li><span class="name">车辆类型：</span>{{formatCarType(car.carType)}}</li>
-        <li><span class="name">电&nbsp;话：</span>{{car.phone || '无'}}</li>
-        <li><span class="name">入园时间：</span>{{formatInTime(car.inTime) || '无'}}</li>
-        <li><span class="name">入园位置：</span>{{car.inPlace || '无'}}</li>
-        <li><span class="name">来访次数：</span>{{car.visitCount || '无'}}</li>
+        <li class="first-li"><span class="name">{{car.carNo || '无'}}</span></li>
+        <li class="second-li">
+          <p><span class="name">车辆类型：</span>{{formatCarType(car.carType)}}</p>
+          <p><span class="name">电&nbsp;话：</span><span class="number">{{car.phone || '无'}}</span></p>
+          <p><span class="name">入园时间：</span><span class="number">{{formatInTime(car.inTime) || '无'}}</span></p>
+          <p><span class="name">入园位置：</span>{{car.inPlace || '无'}}</p>
+          <p><span class="name">来访次数：</span><span class="number">{{car.visitCount || '无'}}</span></p>
+        </li>
       </ul>
     </div>
   </div>

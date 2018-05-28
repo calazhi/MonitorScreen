@@ -40,7 +40,7 @@
         </div>
         <ul class="right-box">
           <li><span class="name">设备名称：</span>电子指路牌</li>
-          <li><span class="name">位&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;置：</span>3栋2单元大堂</li>
+          <li><span class="name">位&nbsp;置：</span>3栋2单元大堂</li>
           <li><span class="name">编&nbsp;码：</span>1001232443244sfsf</li>
           <li><span class="name">类&nbsp;型：</span>枪机摄像头</li>
           <li><span class="name">厂&nbsp;商：</span>海康</li>
@@ -81,7 +81,7 @@
           </li>
         </ul>
         <div class="btn-box">
-          <button type="button" class="btn blue">使   用</button>
+          <button type="button" class="btn blue">使 用</button>
         </div>
       </div>
     </div>
@@ -248,7 +248,7 @@
         <ul class="right-box">
           <li><span class="name">设备名称：</span>{{deviceObj.markerName}}</li>
           <li><span class="name">位&nbsp;置：</span>A区 北门</li>
-          <li><span class="name">编&nbsp;码：</span>{{deviceObj.id}}</li>
+          <li><span class="name">编&nbsp;码：</span><span class="number">{{deviceObj.id}}</span></li>
           <li><span class="name">类&nbsp;型：</span>人行道闸</li>
           <li><span class="name">厂&nbsp;商：</span>捷顺</li>
           <li><span class="name">IP和端口：</span>172.16.10.221:80</li>

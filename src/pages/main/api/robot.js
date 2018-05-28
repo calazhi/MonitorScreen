@@ -1,8 +1,8 @@
-import Axios from '@/assets/js/axios-plugin'
+import axios from '@/assets/js/axios-plugin'
 
 // 用于页面初始化（刷新）时查询，返回所有机器人信息
 export const getInitRobotInfo = data => {
-  return Axios({
+  return axios({
     method: 'get',
     url: '/scp-robotcomponent/robot/getInitRobotInfo',
     params: data
@@ -10,7 +10,7 @@ export const getInitRobotInfo = data => {
 }
 // 机器人召回
 export const forceRecall = (data) => {
-  return Axios({
+  return axios({
     method: 'post',
     url: '/scp-robotcomponent/robot/forceRecall',
     data,
@@ -21,7 +21,7 @@ export const forceRecall = (data) => {
 }
 // 机器人摄像头信息
 export const getRobotCamera = (data) => {
-  return Axios({
+  return axios({
     method: 'get',
     url: '/scp-robotcomponent/robot/getRobotDefaultCamera',
     params: data,
@@ -32,7 +32,7 @@ export const getRobotCamera = (data) => {
 }
 // 机器人异常事件 查询异常状态
 export const getRobotErrEvent = (data) => {
-  return Axios({
+  return axios({
     method: 'get',
     url: 'scp-businesscommonapp/businessCommon/getUpDateReport',
     params: data
@@ -40,7 +40,7 @@ export const getRobotErrEvent = (data) => {
 }
 // 派遣保安推荐列表
 export const getSecurityDistanceList = (data) => {
-  return Axios({
+  return axios({
     method: 'get',
     url: '/scp-patrolapp/patrolSendUser/listSecurityDistance',
     params: data
@@ -48,7 +48,7 @@ export const getSecurityDistanceList = (data) => {
 }
 // 派遣保安
 export const patrolSecuritys = (data) => {
-  return Axios({
+  return axios({
     method: 'post',
     url: '/scp-patrolapp/patrolSendUser/screenSendUser',
     data
@@ -56,7 +56,7 @@ export const patrolSecuritys = (data) => {
 }
 // 解除预警
 export const disMissWarning = (data) => {
-  return Axios({
+  return axios({
     method: 'post',
     url: '/scp-patrolapp/patrolMessage/batchRemoveWarning',
     data

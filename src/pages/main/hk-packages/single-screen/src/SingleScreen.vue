@@ -57,6 +57,7 @@ export default {
      */
     playPreview () {
       this.previewData = [{
+        deviceIp: this.videoplayData.deviceIp,
         deviceID: this.videoplayData.deviceID,
         parentID: this.videoplayData.parentID,
         mediaIP: this.videoplayData.mediaIP,

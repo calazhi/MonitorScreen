@@ -18,7 +18,7 @@
         <a href="javascript:;" class="arrow disabled" id="floor-next"></a>
       </div>
       <!-- <map-control-bar ref="controlBar" @onSceneChange="onSceneChangeHandler" @mapZoomChange="onMapZoomChangeHandler" @onClickBuildHandler="onClickBuildHandler" :parkAreaList="buildList"></map-control-bar> -->
-      <map-control-bar ref="controlBar" :scene-type="0" @onSceneChange="onSceneChangeHandler" @mapZoomChange="onMapZoomChangeHandler"></map-control-bar>
+      <map-control-bar ref="controlBar" :scene-type="0" :magnification="magnification" @onSceneChange="onSceneChangeHandler" @mapZoomChange="onMapZoomChangeHandler"></map-control-bar>
     </div>
     <div class="btn-group">
       <button v-for="(item, index) in datalist" :key="index" :class="['btn', 'icon-'+ item.icon, item.isActived?'active':'']" type="button" @click="onClickButtonHandler(item.icon,$event)">
@@ -29,7 +29,7 @@
 </template>
 <script>
 import { getParkSceneListData, getParkMarkerListData, LOG_TAG } from '@/pages/main/api/map-view'
-import { fixedMarkerListFormat, setMarkerMap, initZoomLevel } from '@/pages/main/map-viewer/assets/js/util'
+import { fixedMarkerListFormat, setMarkerMap, initZoomLevel, getMapMagnification } from '@/pages/main/map-viewer/assets/js/util'
 import { castAnimate } from '@/assets/js/utils'
 import parkDialog from '@/pages/main/map-viewer/mixin/parkdialog'
 import mapScene2 from '@/pages/main/map-viewer/assets/images/u1917_selected.png'
@@ -73,7 +73,8 @@ export default {
       isShowParkScene: false,
       buildList: {}, // 楼栋列表
       currentIndex: -1,
-      isEmpty: false
+      isEmpty: false,
+      magnification: 1
     }
   },
   methods: {
@@ -95,6 +96,7 @@ export default {
       if (this.isEmpty) return
       let zoomInt = parseInt(e.zoom)
       if (zoomInt !== this.currentZoom) {
+        console.log('当前  zoom = ' + zoomInt)
         this.currentZoom = zoomInt
         if (this.currentZoom >= 3 && this.buildList.length > 0) {
           this.isShowParkScene = true
@@ -102,23 +104,27 @@ export default {
           this.isShowParkScene = false
         }
       }
-      console.log('当前  zoom = ' + zoomInt)
+      this.magnification = getMapMagnification(e.zoom)
     },
     /**
      * 处理'放大、缩小地图'事件
-     * params flag: 1放大地图，2缩小地图
+     * params flag: 1放大地图，2缩小地图, 3还原地图到初始大小
      */
     onMapZoomChangeHandler: function (flag) {
       if (this.isEmpty) return
-      let curZoom = parseInt(this.mapObj._map.getView().getZoom())
+      let curZoom = parseInt(this.mapObj.getZoom())
       if (flag === 1 && curZoom >= this.maxZoom) {
         return
       }
-      if (flag === 2 && curZoom <= 0) {
+      if (flag === 2 && curZoom <= this.minZoom) {
         return
       }
       flag === 1 ? curZoom++ : curZoom--
-      this.mapObj._map.getView().setZoom(curZoom)
+      if (flag === 3) {
+        this.mapObj.setZoom(initZoomLevel)
+      } else {
+        this.mapObj.setZoom(curZoom)
+      }
       if (this.currentZoom >= 3 && this.buildList.length > 0) {
         this.isShowParkScene = true
       } else {
@@ -160,14 +166,17 @@ export default {
         sizeH: mapDetail.height,
         domId: 'parkMap',
         mapUrl: mapDetail.url,
-        maxZoom: mapDetail.maxZoom,
-        minZoom: mapDetail.minZoom,
+        maxZoom: mapDetail.maxZoom, // 6
+        minZoom: mapDetail.minZoom + 2, // 2
+        tileMaxZoom: mapDetail.maxZoom, // 6
+        tileMinZoom: mapDetail.minZoom, // 0
         zoom: initZoomLevel,
         controlZoom: false,
         centerGPS: [mapDetail.centerLon, mapDetail.centerLat],
         scale: mapDetail.scale,
         scaleType: mapDetail.scaleType,
-        arcAngle: mapDetail.arcAngle // 弧度值
+        arcAngle: mapDetail.arcAngle, // 弧度值
+        mapMaxResolution: mapDetail.maxResolution
       })
       this.sceneId = mapDetail.id
       this.currentZoom = 2

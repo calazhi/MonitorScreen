@@ -11,84 +11,89 @@
       </div>
       <!-- 保安信息 -->
       <ul class="right-box" v-if='securityShowInfo === "guarder"'>
-        <li>
-          <span class="name">保安-</span>{{revealData.name}}</li>
-        <li>
-          <span class="name">电&nbsp;话：</span>{{revealDatas[0]}}&nbsp;{{revealDatas[1]}}&nbsp;{{revealDatas[2]}}</li>
-        <li>
-          <span class="name">入职时间：</span>{{revealData.hiredate}}</li>
-        <li>
-          <span class="name">巡更设备：</span>{{revealData.deviceName}}</li>
-        <li>
-          <span class="name">当前任务：</span>{{revealData.taskNum || 0}}个</li>
-        <li>
-          <span class="name">完成任务：</span>{{revealData.finishedNum || 0}}个</li>
+        <li class="first-li"><span class="name">保安-</span>{{revealData.name}}</li>
+        <li class="second-li">
+          <p><span class="name">电&nbsp;话：</span><span class="number">{{revealDatas[0]}}&nbsp;{{revealDatas[1]}}&nbsp;{{revealDatas[2]}}</span></p>
+          <p><span class="name">入职时间：</span><span class="number">{{revealData.hiredate}}</span></p>
+          <p><span class="name">巡更设备：</span>{{revealData.deviceName}}</p>
+          <p><span class="name">当前任务：</span><span class="number">{{revealData.taskNum || 0}}</span>个</p>
+          <p><span class="name">完成任务：</span><span class="number">{{revealData.finishedNum || 0}}</span>个</p>
+        </li>
+      </ul>
+      <!-- 事件派遣保安后，点击保安名字弹出信息 -->
+      <ul class="right-box" v-show="false">
+        <li class="first-li"><span class="name">保安-</span>{{revealData.name}}</li>
+        <li><span class="name">电&nbsp;话：</span><span class="number">{{revealDatas[0]}}&nbsp;{{revealDatas[1]}}&nbsp;{{revealDatas[2]}}</span></li>
+        <li><span class="name">当前位置：</span><span class="number">1</span>号岗</li>
+        <li class="today-task">
+          <span class="name">今日任务：</span>
+          <ul>
+            <li>
+              <span class="state ">未处理</span>
+              <span  class="time">20:00:23</span>
+              <span class="con">设备故障</span>
+            </li>
+            <li>
+              <span class="state doing">处理中</span>
+              <span  class="time">20:00:23</span>
+              <span class="con">设备故障</span>
+            </li>
+            <li>
+              <span class="state done">已完成</span>
+              <span  class="time">20:00:23</span>
+              <span class="con">设备故障</span>
+            </li>
+          </ul>
+        </li>
       </ul>
       <!-- 业主信息 -->
       <ul class="right-box" v-if='securityShowInfo === "households"'>
-        <li>
-          <span class="name">住户-</span>{{revealData.name}}</li>
-        <li>
-          <span class="name">电&nbsp;话：</span>{{revealDatas[0]}}&nbsp;{{revealDatas[1]}}&nbsp;{{revealDatas[2]}}</li>
-        <li>
-          <span class="name">住&nbsp;址：</span>{{revealData.ownerAddress}}</li>
-        <li>
-          <span class="name">登记时间：</span>{{revealData.registerTime}}</li>
-        <li>
-          <span class="name">车牌号：</span>
-          <span v-if="!revealData.carInfoDtoList">无</span>
-          <span class="car" v-for="(item,index) in revealData.carInfoDtoList" :key="index" v-else>{{item.carNum+'('+(item.carportType || '无')+')'}}</span>
+        <li class="first-li"><span class="name">住户-</span>{{revealData.name}}</li>
+        <li class="second-li">
+          <p><span class="name">电&nbsp;话：</span><span class="number">{{revealDatas[0]}}&nbsp;{{revealDatas[1]}}&nbsp;{{revealDatas[2]}}</span></p>
+          <p><span class="name">住&nbsp;址：</span>{{revealData.ownerAddress}}</p>
+          <p><span class="name">登记时间：</span><span class="number">{{revealData.registerTime}}</span></p>
+          <p>
+            <span class="name">车牌号：</span>
+            <span v-if="!revealData.carInfoDtoList">无</span>
+            <span class="car number" v-for="(item,index) in revealData.carInfoDtoList" :key="index" v-else>{{item.carNum+'('+(item.carportType || '无')+')'}}</span>
+          </p>
+          <!--  {{revealData.carPlate || '无'}} -->
+          <p><span class="name">人员类型：</span>{{revealData.humanType}}</p>
         </li>
-        <!--  {{revealData.carPlate || '无'}} -->
-        <li>
-          <span class="name">人员类型：</span>{{revealData.humanType}}</li>
       </ul>
       <!-- 访客信息 -->
       <ul class="right-box" v-if='securityShowInfo === "visitor"'>
-        <li>
-          <span class="name ">访客-</span>{{revealData.name || '无'}}</li>
-        <li>
-          <span class="name">电&nbsp;话：</span>{{revealDatas[0]}}&nbsp;{{revealDatas[1]}}&nbsp;{{revealDatas[2]}}</li>
-        <li>
-          <span class="name">来访地点：</span>{{revealData.visitorResourceName || '无'}}</li>
-        <li>
-          <span class="name">最近来访：</span>{{revealData.recentAccessTime || '无'}}</li>
-        <li>
-          <span class="name">来访次数：</span>{{revealData.accessNum || 1}}次</li>
-        <li>
-          <span class="name">车牌号：</span>{{revealData.carPlate || '无'}}</li>
+        <li class="first-li"><span class="name ">访客-</span>{{revealData.name || '无'}}</li>
+        <li class="second-li">
+          <p><span class="name">电&nbsp;话：</span><span class="number">{{revealDatas[0]}}&nbsp;{{revealDatas[1]}}&nbsp;{{revealDatas[2]}}</span></p>
+          <p><span class="name">来访地点：</span>{{revealData.visitorResourceName || '无'}}</p>
+          <p><span class="name">最近来访：</span><span class="number">{{revealData.recentAccessTime || '无'}}</span></p>
+          <p><span class="name">来访次数：</span>{{revealData.accessNum || 1}}次</p>
+          <p><span class="name">车牌号：</span><span class="number">{{revealData.carPlate || '无'}}</span></p>
+        </li>
       </ul>
       <!-- 重点人员 -->
       <ul class="right-box" v-if='securityShowInfo === "danger"'>
-        <li>
-          <span class="name">重点人员-</span> {{revealData.name}}
+        <li class="first-li"><span class="name">重点人员-</span> {{revealData.name}}</li>
+        <li class="second-li">
+          <p><span class="name">电&nbsp;话：</span><span class="number">{{revealDatas[0]}}&nbsp;{{revealDatas[1]}}&nbsp;{{revealDatas[2]}}</span></p>
+          <p><span class="name">入园时间：</span><span class="number">{{revealData.recentAccessTime}}</span></p>
+          <p><span class="name">入园位置：</span>{{info.resourceName}}</p>
+          <p><span class="name">来访次数：</span><span class="number">{{revealData.accessNum||1}}</span>次</p>
+          <p><span class="name">类&nbsp;型：</span>{{revealData.focusOnPersonnel}}</p>
         </li>
-        <li>
-          <span class="name">电&nbsp;话：</span>{{revealDatas[0]}}&nbsp;{{revealDatas[1]}}&nbsp;{{revealDatas[2]}}</li>
-        <li>
-          <span class="name">入园时间：</span>{{revealData.recentAccessTime}}</li>
-        <li>
-          <span class="name">入园位置：</span>{{info.resourceName}}</li>
-        <li>
-          <span class="name">来访次数：</span>{{revealData.accessNum||1}}次</li>
-        <li>
-          <span class="name">类&nbsp;型：</span>{{revealData.focusOnPersonnel}}</li>
       </ul>
       <!-- 未登记信息 -->
       <ul class="right-box" v-if='securityShowInfo === "stranger"'>
-        <li>
-          <span class="name">未登记</span>
+        <li class="first-li"><span class="name">未登记</span></li>
+        <li class="second-li">
+          <p><span class="name">电&nbsp;话：</span>无</p>
+          <p><span class="name">入园时间：</span><span class="number">{{revealData.recentAccessTime}}</span></p>
+          <p><span class="name">入园位置：</span>{{revealData.resourceName}}</p>
+          <p><span class="name">来访次数：</span><span class="number">1</span>次</p>
+          <p><span class="name">车牌号：</span>无</p>
         </li>
-        <li>
-          <span class="name">电&nbsp;话：</span>无</li>
-        <li>
-          <span class="name">入园时间：</span>{{revealData.recentAccessTime}}</li>
-        <li>
-          <span class="name">入园位置：</span>{{revealData.resourceName}}</li>
-        <li>
-          <span class="name">来访次数：</span>1次</li>
-        <li>
-          <span class="name">车牌号：</span>无</li>
       </ul>
     </div>
   </div>

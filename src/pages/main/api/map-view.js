@@ -1,4 +1,4 @@
-import Axios from '@/assets/js/axios-plugin'
+import axios from '@/assets/js/axios-plugin'
 
 // 代码提交部署时使用/scp-mapapp作上下文
 const contextPath = '/scp-mapapp'
@@ -11,7 +11,7 @@ const eventContextPath = '/scp-businesscommonapp'
  * @param {obj} data 包含sceneId属性的对象
  */
 export const getMarkerListData = data => {
-  return Axios({
+  return axios({
     method: 'get',
     url: contextPath + '/mapService/getMarkerList',
     params: data
@@ -23,7 +23,7 @@ export const getMarkerListData = data => {
  * @param {obj} data 包含sceneId属性的对象
  */
 export const getParkMarkerListData = data => {
-  return Axios({
+  return axios({
     method: 'get',
     url: '/scp-parkinglotapp/parkingLotNewMonitor/queryMarkersList',
     params: data
@@ -35,7 +35,7 @@ export const getParkMarkerListData = data => {
  * @param {obj} data 包含deviceId属性的对象
  */
 export const queryMarkerDetail = data => {
-  return Axios({
+  return axios({
     method: 'get',
     url: '/scp-parkinglotapp/parkingLotNewMonitor/queryMarkerDetail',
     params: data
@@ -47,7 +47,7 @@ export const queryMarkerDetail = data => {
  * @param {obj} data 包含sceneId属性的对象
  */
 export const getAreaListData = data => {
-  return Axios({
+  return axios({
     method: 'get',
     url: contextPath + '/mapService/getAreaList',
     params: data
@@ -59,7 +59,7 @@ export const getAreaListData = data => {
  * @param {obj} data 包含sceneId属性的对象
  */
 export const getParkAreaListData = data => {
-  return Axios({
+  return axios({
     method: 'get',
     url: '/scp-parkinglotapp/parkingLotNewMonitor/queryParkSeatAreasList',
     params: data
@@ -71,7 +71,7 @@ export const getParkAreaListData = data => {
  * @param {obj} data 包含sceneId属性的对象
  */
 export const getSceneInfoData = data => {
-  return Axios({
+  return axios({
     method: 'get',
     url: contextPath + '/mapService/getSceneInfo',
     params: data
@@ -83,7 +83,7 @@ export const getSceneInfoData = data => {
  * @param {obj} data 包含场景type属性的对象
  */
 export const getSceneListData = data => {
-  return Axios({
+  return axios({
     method: 'get',
     url: contextPath + '/mapService/getSceneList',
     params: data
@@ -95,7 +95,7 @@ export const getSceneListData = data => {
  * @param {obj} data 包含场景type属性的对象
  */
 export const getParkSceneListData = data => {
-  return Axios({
+  return axios({
     method: 'get',
     url: '/scp-parkinglotapp/parkingLotNewMonitor/queryParkingMapSceneData',
     params: data
@@ -110,7 +110,7 @@ export const getParkSceneListData = data => {
  * }
  */
 export const getSecurityListData = data => {
-  return Axios({
+  return axios({
     method: 'get',
     url: '/scp-patrolapp/patrolSendUser/listSecurity',
     // url: '/getSecurity',
@@ -126,7 +126,7 @@ export const getSecurityListData = data => {
  */
 export const getHouseholdVisitorStrangerData = data => {
   console.log('住户')
-  return Axios({
+  return axios({
     method: 'get',
     url: eventContextPath + '/businessCommon/getPersonnelList',
     params: data
@@ -139,7 +139,7 @@ export const getHouseholdVisitorStrangerData = data => {
  */
 export const getRobotData = data => {
   console.log('快递机器人')
-  return Axios({
+  return axios({
     method: 'get',
     url: '/scp-robotcomponent/robot/getInitRobotInfo',
     params: data
@@ -152,7 +152,7 @@ export const getRobotData = data => {
  */
 export const getGuidepostData = data => {
   console.log('指路牌')
-  return Axios({
+  return axios({
     method: 'get',
     url: '/scp-guidepostcomponent/signPostStatus/queryForList',
     params: data
@@ -163,7 +163,7 @@ export const getGuidepostData = data => {
  */
 export const getWarnData = data => {
   console.log('报警点')
-  return Axios({
+  return axios({
     method: 'get',
     url: eventContextPath + '/businessCommon/getEventList',
     params: data
@@ -175,7 +175,7 @@ export const getWarnData = data => {
 /*
 轨迹的都不做了，对应的代码先注释，功能函数保留，加注释
 export const getRobotLine = data => {
-  return Axios({
+  return axios({
     methos: 'get',
     url: '/scp-robotRoute',
     params: data
@@ -189,7 +189,7 @@ export const getRobotLine = data => {
 /*
 轨迹的都不做了，对应的代码先注释，功能函数保留，加注释
 export const getGuarderLine = data => {
-  return Axios({
+  return axios({
     methos: 'get',
     url: '/scp-patrolapp/patrolGpsEvent/queryGPSInHour',
     params: data
@@ -201,7 +201,7 @@ export const getGuarderLine = data => {
  * @param {obj} data 包含areaId、floor_type属性的对象
  */
 export const getAreaMarkerInfoData = data => {
-  return Axios({
+  return axios({
     method: 'get',
     url: contextPath + '/mapService/getAreaMarkerInfo',
     params: data
@@ -212,7 +212,7 @@ export const getAreaMarkerInfoData = data => {
  * @description 获取点位信息
  */
 export const getMarkerInfoData = data => {
-  return Axios({
+  return axios({
     method: 'get',
     url: contextPath + '/mapService/getMarkerInfo',
     params: data
@@ -223,7 +223,7 @@ export const getMarkerInfoData = data => {
  * @description 轮询查询人员列表更新时间
  */
 export const getMapSettingData = data => {
-  return Axios({
+  return axios({
     method: 'get',
     url: contextPath + '/mapService/getMapSetting',
     params: data

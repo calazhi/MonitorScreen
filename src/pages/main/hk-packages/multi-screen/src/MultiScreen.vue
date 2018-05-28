@@ -52,6 +52,7 @@ export default {
       getVideoData({ groupFlag: 3 }).then(res => {
         this.videoParams = res.map((item) => {
           return {
+            deviceIp: item.deviceIP,
             deviceID: item.subDeviceID,
             parentID: item.parentID,
             mediaIP: item.mediaIp,

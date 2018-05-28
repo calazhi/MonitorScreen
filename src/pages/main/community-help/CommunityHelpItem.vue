@@ -90,7 +90,7 @@
               <li>
                 <span class="name">事&nbsp;件：</span>{{inTheCallRecord[inTheCallRecord.callId].callType}}</li>
               <li>
-                <span class="name">时&nbsp;间：</span>{{inTheCallRecord[inTheCallRecord.callId].time}}</li>
+                <span class="name">时&nbsp;间：</span><span class="number">{{inTheCallRecord[inTheCallRecord.callId].time}}</span></li>
               <li class="place">
                 <span class="name">地&nbsp;点：</span>{{inTheCallRecord[inTheCallRecord.callId].deviceAddress}}</li>
             </ul>

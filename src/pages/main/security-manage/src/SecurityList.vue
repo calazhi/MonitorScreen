@@ -15,7 +15,7 @@
                     <p class="txt">
                       <span class="name" :title="list[(i-1)*size+j-1].name">{{list[(i-1)*size+j-1].name}}</span>
                     </p>
-                    <p class="task" v-if="list[(i-1)*size+j-1].taskNum>0" :class="{'flip':animation.step03&&addTaskId===list[(i-1)*size+j-1].userId}">{{list[(i-1)*size+j-1].taskNum}}</p>
+                    <p class="task number" v-if="list[(i-1)*size+j-1].taskNum>0" :class="{'flip':animation.step03&&addTaskId===list[(i-1)*size+j-1].userId}">{{list[(i-1)*size+j-1].taskNum}}</p>
                     <p class="add-task" v-if="animation.step02&&addTaskId===list[(i-1)*size+j-1].userId" :class="{'fade-top':animation.step02&&addTaskId===list[(i-1)*size+j-1].userId}">{{addTaskTip}}</p>
                   </div>
                   <button type="button" class="send-btn" @click="fnAssign(list[(i-1)*size+j-1])">{{list[(i-1)*size+j-1].isOnLine !== 1?'离 线':'派 遣'}}</button>
@@ -26,6 +26,7 @@
         </carousel>
       </div>
     </div>
+    <div class="news-note" v-show="false"><span class="icon-tips"></span>摄像头 002 故障已修复，请小心使用！</div>
   </div>
 </template>
 <script>

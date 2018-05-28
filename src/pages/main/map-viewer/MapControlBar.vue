@@ -33,8 +33,9 @@
       <button :class="['img-button', 'icon-parking', sceneType===0 ? 'sceneActive' : '']" type="button" @click="onChooseSceneHandler(0)"><p class="warning-tips" v-show="false"></p><p class="btn-text">停车场</p></button>
     </div>
     <div class="zoom-control">
-      <button class="img-button zoom-size icon-enlarge" type="button" @click="onZoomMapHandler(1)"></button>
-      <button class="img-button zoom-size mar-top icon-minify" type="button" @click="onZoomMapHandler(2)"></button>
+      <!-- <button class="img-button zoom-size icon-enlarge" type="button" @click="onZoomMapHandler(1)"></button> -->
+      <!-- <button class="img-button zoom-size mar-top icon-minify" type="button" @click="onZoomMapHandler(2)"></button> -->
+      <button class="img-button zoom-size" type="button" @click="onZoomMapHandler(3)">{{magnification}}X</button>
     </div>
   </div>
 </template>
@@ -48,7 +49,8 @@ export default {
     parkAreaList: {
       type: Object
     },
-    sceneType: Number
+    sceneType: Number,
+    magnification: Number
   },
   data () {
     return {
@@ -120,6 +122,7 @@ export default {
      */
     onShowHideWarningHandler: function () {
       store.commit('toggleAlarms', this.showhideTip)
+      this.$emit('showhidetip', this.showhideTip)
     },
     /**
      * 处理'切换园区和停车场场景'事件

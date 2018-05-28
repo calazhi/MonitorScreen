@@ -1,4 +1,4 @@
-import Axios from '@/assets/js/axios-plugin'
+import axios from '@/assets/js/axios-plugin'
 let contextPath = '/scp-videointercomapp'
 // let contextPath = ''
 
@@ -17,14 +17,14 @@ export const callinConfirm = (
     videoPort: videoPort
   }
   console.log(params)
-  return Axios.post(contextPath + '/call/callinConfirm', params)
+  return axios.post(contextPath + '/call/callinConfirm', params)
 }
 export const ringing = (callId, sdp) => {
   let params = {
     callId: callId,
     sdp: sdp
   }
-  return Axios.post(contextPath + '/call/callinRinging', params)
+  return axios.post(contextPath + '/call/callinRinging', params)
 }
 
 /**
@@ -35,7 +35,7 @@ export const offHook = (callId, sdp) => {
     callId: callId,
     sdp: sdp
   }
-  return Axios.post(contextPath + '/call/offHook', params)
+  return axios.post(contextPath + '/call/offHook', params)
 }
 
 /**
@@ -45,7 +45,7 @@ export const onHook = callId => {
   let params = {
     callId: callId
   }
-  return Axios.post(contextPath + '/call/onHook', params)
+  return axios.post(contextPath + '/call/onHook', params)
 }
 export const onHookSync = callId => {
   let params = {
@@ -74,7 +74,7 @@ export const openDoor = (callId, deviceCode) => {
     callId: callId,
     deviceCode: deviceCode
   }
-  return Axios.post(contextPath + '/call/openDoor', params)
+  return axios.post(contextPath + '/call/openDoor', params)
 }
 
 /**
@@ -91,7 +91,7 @@ export const callout = (callId, toDeviceCode, from, to, audioIp, audioPort) => {
     audioIp: audioIp,
     audioPort: audioPort
   }
-  return Axios.post(contextPath + '/call/callout', params)
+  return axios.post(contextPath + '/call/callout', params)
 }
 
 /**
@@ -102,12 +102,12 @@ export const calloutConfirm = (callId, sdp) => {
     callId: callId,
     sdp: sdp
   }
-  return Axios.post(contextPath + '/call/calloutConfirm', params)
+  return axios.post(contextPath + '/call/calloutConfirm', params)
 }
 /**
  * 查询ip列表
  */
 export const ipList = () => {
   let params = {}
-  return Axios.get(contextPath + '/VideointercomAppPcIp/list', params)
+  return axios.get(contextPath + '/VideointercomAppPcIp/list', params)
 }

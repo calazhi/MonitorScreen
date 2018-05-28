@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="ico-btn-group">
-      <a class="ico turn-off" @click="confirmBox"></a>
+      <!--<a class="ico turn-off" @click="confirmBox"></a>-->
       <a class="ico exit-full" @click="handleClose"></a>
     </div>
 
@@ -9,40 +9,64 @@
     <div class="detail-info-box" v-if="!isShowDone">
       <div class="left-box">
         <!-- 调单路视频组件 -->
-        <div class="view">
-          <single-screen :videoplayData="videoplayData" :ocxbgColor="ocxbgColor"></single-screen>
+        <div class="view-box">
+          <div class="view iframe-view" v-show="showCapture">
+            <iframe frameborder="0 " class="iframe-box "></iframe>
+            <img :src="warnData.eventBody.scenePic&&warnData.eventBody.scenePic[0] || errorImg" :onerror="defaultImg" alt=" " class="pic ">
+          </div>
+          <div class="view">
+            <single-screen :videoplayData="videoplayData" :ocxbgColor="ocxbgColor"></single-screen>
+          </div>
         </div>
-        <div class="key-person-note" v-show="false">派遣失败，请重新派遣！</div>
-        <div class="key-person-txt" v-show="false">派遣中：等待保安张晓明、程飞接收任务</div>
-        <button type="button" class="btn cancel" @click="dispatchGuard" v-show="!dealWarnInfo" :class="{ 'disabled': !checkedInfo.recommedSecurity.length}">派遣保安</button>
-        <!--派遣添加类.doing-->
-        <button type="button" class="btn doing disabled" v-show="dealWarnInfo">处 理 中</button>
+        <div class="tabs-box">
+          <div class="tabs-btn-wrap">
+            <button class="tabs-btn" :class="{active: showCapture}" @click="toggleToCapture"><span class="icon-snapshot"></span>抓拍</button>
+          </div>
+          <div class="tabs-btn-wrap">
+            <button class="tabs-btn" :class="{active: !showCapture}" @click="toggleToVideo"><span class="icon-video"></span>实时监控</button>
+          </div>
+        </div>
       </div>
-      <ul class="right-box">
-        <li class="pic-box"><img :src="warnData.eventBody.scenePic&&warnData.eventBody.scenePic[0] || errorImg" :onerror="defaultImg" alt=" " class="pic "></li>
-        <li>
-          <span class="name ">事&nbsp;件：</span>{{warnData.eventBody.eventContent}}</li>
-        <li>
-          <span class="name ">时&nbsp;间：</span>{{formatDate(warnData.eventHeader.occurTime,'YYYY-MM-DD hh:mm:ss')}}</li>
-        <li>
-          <span class="name">地&nbsp;点：</span>{{warnData.eventBody.address}}</li>
-        <li v-if="!checkedInfo.checkedSecurity.length">
-          <span class="name" v-show="!dealWarnInfo">推荐保安：</span>
-          <span class="name" v-show="dealWarnInfo">保&nbsp;安：</span>
-          <span v-if="checkedInfo.recommedSecurity.length">{{checkedInfo.recommedSecurity[0].name}} {{ (warnData.eventHeader.eventType==='25020' || warnData.eventHeader.eventType==='25019'||warnData.eventHeader.eventType==='91001') && checkedInfo.recommedSecurity[1] && checkedInfo.recommedSecurity[1].name || ''}}</span>
-          <span v-else>无</span>
-          <a class="icon-send" v-if="checkedInfo.recommedSecurity.length" @click="choseDispathGuard " v-show="!dealWarnInfo" href="javascript:;"></a>
-        </li>
-        <li v-if="checkedInfo.checkedSecurity.length>0">
-          <span class="name" v-show="!dealWarnInfo">推荐保安：</span>
-          <span class="name" v-show="dealWarnInfo">保&nbsp;安：</span>
-          <span>
-            <span v-for="(item,index) in checkedInfo.checkedSecurity" :key="index">{{item}} </span>
-          </span>
-        </li>
-      </ul>
+
+      <div class="right-box">
+        <ul>
+          <!--<li class="pic-box"><img :src="warnData.eventBody.scenePic&&warnData.eventBody.scenePic[0] || errorImg" :onerror="defaultImg" alt=" " class="pic "></li>-->
+          <li class="first-li-normal">
+            <p><span class="name">事&nbsp;件：</span>{{warnData.eventBody.eventContent}}</p>
+            <p><span class="name">时&nbsp;间：</span><span class="number">{{formatDate(warnData.eventHeader.occurTime,'YYYY-MM-DD hh:mm:ss')}}</span></p>
+            <p><span class="name">地&nbsp;点：</span>{{warnData.eventBody.address}}</p>
+          </li>
+          <li>
+            <p><span class="name">状&nbsp;态：</span>{{eventStatus}}</p>
+          </li>
+          <!--无保安可派遣时-->
+          <li v-if="!checkedInfo.checkedSecurity.length">
+            <span class="name" v-show="!dealWarnInfo">推荐保安：</span>
+            <span class="name" v-show="dealWarnInfo">保&nbsp;安：</span>
+            <span v-if="checkedInfo.recommedSecurity.length">{{checkedInfo.recommedSecurity[0].name}} {{ (warnData.eventHeader.eventType==='25020' || warnData.eventHeader.eventType==='25019'||warnData.eventHeader.eventType==='91001') && checkedInfo.recommedSecurity[1] && checkedInfo.recommedSecurity[1].name || ''}}</span>
+            <span v-else>无</span>
+            <a class="icon-send" v-if="checkedInfo.recommedSecurity.length" @click="choseDispathGuard " v-show="!dealWarnInfo" href="javascript:;"></a>
+          </li>
+          <!--有保安可派遣时-->
+          <li v-if="checkedInfo.checkedSecurity.length>0">
+            <span class="name" v-show="!dealWarnInfo">推荐保安：</span>
+            <span class="name" v-show="dealWarnInfo">保&nbsp;安：</span>
+            <span>
+              <span v-for="(item,index) in checkedInfo.checkedSecurity" :key="index">{{item}} </span>
+            </span>
+          </li>
+        </ul>
+        <div class="btn-box">
+          <button type="button" class="btn cancel" @click="openForcibleDismissPop">解除警报</button>
+          <button type="button" class="btn confirm" @click="dispatchGuard" :class="{ 'disabled': !checkedInfo.recommedSecurity.length}">派遣保安</button>
+          <!--<button type="button" class="btn confirm" @click="dispatchGuard" v-show="!dealWarnInfo" :class="{ 'disabled': !checkedInfo.recommedSecurity.length}">派遣保安</button>-->
+          <!--派遣添加类.doing-->
+          <!--<button type="button" class="btn doing disabled" v-show="dealWarnInfo">处 理 中</button>-->
+        </div>
+      </div>
     </div>
-    <!--解除警报-->
+
+    <!--解除警报 处理完成时的状态-->
     <div class="detail-info-box" v-else-if="checkedInfo.imgInit">
       <div class="left-box">
         <div class="view">
@@ -51,7 +75,7 @@
         <button type="button" class="btn confirm" @click="dismissWarn">解除警报</button>
       </div>
       <ul class="right-box">
-        <li>
+        <li class="first-li-normal">
           <span class="name">状&nbsp;态：</span>处理完成</li>
         <li>
           <span class="name">保&nbsp;安：</span>
@@ -62,24 +86,42 @@
           <span class="name ">处理结果：</span>{{checkedInfo.doneData&&checkedInfo.doneData.handleDetail}}</li>
       </ul>
     </div>
-    <!--确定是否解除警报-->
-    <div class="clear-confirm-box " v-show="isConfirm ">
+
+    <!--解除该窗口全部预警的弹窗  ### 先注释保留改功能 ###-->
+    <!--<div class="clear-confirm-box " v-show="isConfirm ">-->
+      <!--<iframe frameborder="0 " class="iframe-box "></iframe>-->
+      <!--<div class="bg "></div>-->
+      <!--<div class="con ">-->
+        <!--<p class="title ">确定要解除该窗口的所有报警吗？</p>-->
+        <!--<div class="btn-box ">-->
+          <!--<button type="button " class="btn cancel " @click="cancleDismiss ">取 消</button>-->
+          <!--<button type="button " class="btn confirm " @click="mulDismissWarn ">解 除</button>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
+
+    <!--强制解除该窗口预警的弹窗-->
+    <div class="clear-confirm-box " v-show="showForcibleDismissPop">
       <iframe frameborder="0 " class="iframe-box "></iframe>
       <div class="bg "></div>
       <div class="con ">
-        <p class="title ">确定要解除该窗口的所有报警吗？</p>
+        <p class="title ">确定要解除该报警吗？</p>
         <div class="btn-box ">
-          <button type="button " class="btn cancel " @click="cancleDismiss ">取 消</button>
-          <button type="button " class="btn confirm " @click="mulDismissWarn ">解 除</button>
+          <button type="button" class="btn cancel " @click="closeForcibleDismissPop">取 消</button>
+          <button type="button" class="btn confirm " @click="forceDismissWarn">解 除</button>
         </div>
       </div>
     </div>
+
     <div class="note-wrap" v-show="toast.show">
       <iframe frameborder="0" class="iframe-box"></iframe>
       <transition name="fade" mode="out-in">
         <div class="note-pop">{{toast.msg}}</div>
       </transition>
     </div>
+
+    <div class="news-note" v-if="false"><span class="icon-warning"></span>派遣失败，请重新派遣其他保安！</div>
+    <div class="news-note" v-if="false"><span class="icon-news"></span>收到1条新的预警 - 越界预警！</div>
   </div>
 </template>
 <script>
@@ -92,8 +134,6 @@ export default {
     ocxbgColor: Number,
     errorImg: String,
     defaultImg: String
-  },
-  components: {
   },
   data () {
     return {
@@ -112,7 +152,26 @@ export default {
         msg: ''
       },
       isDispatch: true,
-      errorTip: 'this.src="' + require('../../../../../../static/images/failure-warning.png') + '"'
+      errorTip: 'this.src="' + require('../../../../../../static/images/failure-warning.png') + '"',
+      showForcibleDismissPop: false, // 是否显示解除该预警的弹窗showForcibleDismissPop
+      showCapture: false // 是否显示抓拍图片
+    }
+  },
+  computed: {
+    // 预警事件的当前处理状态
+    eventStatus () {
+      switch (this.warnData.eventHeader.eventStatus) {
+        case '1':
+          return '处理中'
+        case '3':
+          return '已完成'
+        case '4':
+          return '已解除'
+        case '98':
+          return '手动解除'
+        case '99':
+          return '待处理'
+      }
     }
   },
   mounted () {
@@ -179,7 +238,7 @@ export default {
         })
       }
     },
-    // 弹出确认框
+    // 弹出确认框(批量解除的弹窗)
     confirmBox () {
       this.isConfirm = true
     },
@@ -193,23 +252,55 @@ export default {
     },
     // 解除单条警报
     dismissWarn () {
-      this.$emit('mulDismissWarn', this.warnData.eventHeader.eventId)
+      this.$emit('mulDismissWarn', {eventId: this.warnData.eventHeader.eventId, forcible: false})
+    },
+    // 强制解除当前预警
+    forceDismissWarn () {
+      console.log('强制解除当前预警')
+      this.$emit('mulDismissWarn', {eventId: this.warnData.eventHeader.eventId, forcible: true})
     },
     // 初始化页面数据
     init () {
-      if (this.warnData.eventHeader.eventStatus === '99') {
+      let eventStatus = this.warnData.eventHeader.eventStatus // 当前事件状态
+      if (eventStatus === '99') { // 未派遣
         this.dealWarnInfo = false
         this.isShowDone = false
       } else {
-        if (this.warnData.eventHeader.eventStatus === '1') { // 事件已派遣保安
+        if (eventStatus === '1') { // 事件已派遣保安
           this.dealWarnInfo = true
           this.isShowDone = false
         }
-        if (this.warnData.eventHeader.eventStatus === '3') { // 事件已完成
+        if (eventStatus === '3') { // 事件已完成
           this.isShowDone = true
           this.dealWarnInfo = false
         }
       }
+    },
+    // 强制解除当前预警
+    // forceDeleteWarn () {
+    //   forceDeleteWarning({eventId: this.warnData.eventHeader.eventId}).then(res => {
+    //     console.log('解除预警成功', res)
+    //     this.closeDismissPop()
+    //   }).catch(err => {
+    //     // this.closeDismissPop()
+    //     console.log(err)
+    //   })
+    // },
+    // 打开强制解除当前预警的弹窗
+    openForcibleDismissPop () {
+      this.showForcibleDismissPop = true
+    },
+    // 关闭强制解除弹窗
+    closeForcibleDismissPop () {
+      this.showForcibleDismissPop = false
+    },
+    // 切换显示抓拍图
+    toggleToCapture () {
+      this.showCapture = true
+    },
+    // 切换显示实时监控
+    toggleToVideo () {
+      this.showCapture = false
     }
   },
   watch: {
