@@ -12,7 +12,7 @@
           </div>
           <div class="note" v-show="eventStatus === 99">{{operateResult}}</div>
           <!--推荐保安为空，事件ID不存在，设备位置为空时，派遣按钮均不可点击-->
-          <button type="button" class="btn confirm" @click="sendSecurityGuarde()" v-show="eventStatus === 99" :class="{ 'disabled': !recommedSecurity.length || !eventId || eventId === '' || !deviceData.orgName || deviceData.orgName === ''}">派遣人员维修</button>
+          <button type="button" class="btn confirm" @click="sendSecurityGuarde()" v-show="eventStatus === 99" disabled="{!recommedSecurity.length || !eventId || eventId === '' || !deviceData.orgName || deviceData.orgName === ''}" :class="{ 'disabled': !recommedSecurity.length || !eventId || eventId === '' || !deviceData.orgName || deviceData.orgName === ''}">派遣人员维修</button>
           <!-- <button type="button" class="btn open" v-show="eventStatus === 3">故障解除</button> -->
         </div>
         <ul class="right-box">
@@ -22,7 +22,7 @@
             <span class="name">位&nbsp;置：</span>{{deviceData.orgName}}</li>
           <li>
             <span class="name">故障时间：</span>{{occurTime}}</li>
-          <li>
+          <li class="situation">
             <span class="name">状&nbsp;态：</span>
             <!-- <span class="tag">网络异常</span>
             <span class="tag">电源断开</span> -->

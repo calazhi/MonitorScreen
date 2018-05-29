@@ -72,7 +72,7 @@ function register ({key, range, points, callback}) {
  */
 function init () {
   // 加载WS， 每一个类型对应的数据都丢给对应组件去处理
-  loadWebsocket('egscuimain').then(jsonString => {
+  loadWebsocket(jsonString => {
     let data = null
     try {
       data = JSON.parse(jsonString).data
@@ -108,7 +108,7 @@ function init () {
         }
       }
     }
-  })
+  }, 'egscuimain')
 }
 
 export default {

@@ -402,7 +402,7 @@ aside{
   /* z-index: 5; */
   width: 100%;
   height: 100%;
-  padding: 1.95rem 2.05rem 1.8rem;;
+  padding: 1.95rem 2.06rem 1.8rem;;
   background-color: #0c012d;
 }
 
@@ -422,8 +422,8 @@ aside{
 }
 
 .member-entry-box .view-wrap{
-  flex: 0 0 26.7rem;
-  width: 26.7rem;
+  flex: 0 0 26.68rem;
+  width: 26.68rem;
   height: 7.5rem;
   display: flex;
   justify-content: space-between;
@@ -562,7 +562,7 @@ aside{
 }
 
 .car-entry-box .view-wrap .view-list{
-  width: 17.6rem;
+  width: 17.58rem;
   height: 7.5rem;
   display: flex;
   flex-wrap: wrap;
@@ -2187,6 +2187,7 @@ aside{
   justify-content: center;
 }
 
+.detail-info-box .left-box .btn,
 .detail-info-box .btn-box .btn {
   width: 100%;
   height: 1.7rem;
@@ -2292,7 +2293,7 @@ aside{
 }
 
 .detail-info-box .right-box{
-  width: 12.8rem;
+  width: 12rem;
   display: flex;
   flex-wrap: wrap;
   align-content: space-between;
@@ -2303,8 +2304,8 @@ aside{
 
 .detail-info-box .right-box li {
   position: relative;
-  flex: 0 0 11.8rem;
-  width: 11.8rem;
+  flex: 0 0 11rem;
+  width: 11rem;
   /*height: .8rem;*/
   line-height: 1.3rem;
   padding: .2rem .5rem;
@@ -2377,8 +2378,7 @@ aside{
 }*/
 
 .detail-info-box .right-box .situation {
-  height: 7.5rem;
-  font-size: .7rem;
+  height: 6rem;
 }
 
 .detail-info-box .situation li{
@@ -3038,16 +3038,16 @@ aside{
   height: 9rem;
 }
 
-/*.patrol-report-box .detail-info-box .left-box .view {
-  background-color: #312209;
-}*/
-
+.patrol-report-box .detail-info-box .left-box .view {
+  height: 11.5rem;
+}
 .patrol-report-box .detail-info-box .left-box .pic {
-  width: auto;
+  max-width: 14rem;
+  max-height: 11.5rem;
+  height: auto;
 }
 
-.item-warning .detail-info-box .right-box .accident,
-.patrol-report-box .detail-info-box .right-box .accident {
+.item-warning .detail-info-box .right-box .accident{
   white-space: normal;
   height: 5.1rem;
   line-height: 1.1rem;

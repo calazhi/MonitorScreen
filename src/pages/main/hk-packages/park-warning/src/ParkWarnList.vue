@@ -162,6 +162,8 @@ export default {
     eventStatus () {
       switch (this.warnData.eventHeader.eventStatus) {
         case '1':
+          return '派遣中'
+        case '2':
           return '处理中'
         case '3':
           return '已完成'

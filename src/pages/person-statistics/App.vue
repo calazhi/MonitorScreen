@@ -9,11 +9,11 @@
         <div class="visit-box">
           <div class="num-box visitor">
             <p class="num">{{visitorNum}}</p>
-            <p class="note">访客</p>
+            <p class="note">受邀访客</p>
           </div>
           <div class="num-box other">
             <p class="num">{{otherNum}}</p>
-            <p class="note">其他人员</p>
+            <p class="note">其他访客</p>
           </div>
         </div>
 
@@ -52,7 +52,9 @@ export default {
   },
   mounted () {
     // 启动 websocket
-    loadWebsocket('egscuipersonstatistics').then(this.onWebsocketMessageReceived)
+    loadWebsocket(
+      this.onWebsocketMessageReceived, 'egscuipersonstatistics'
+    )
     // 查询今日访客和其他人员数
     this.getPersonCount()
     // 查询24小时进出人数

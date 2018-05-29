@@ -96,7 +96,9 @@ export default {
   mounted () {
     this.init()
     this.getSecurityData()
-    loadWebsocket('egscuigardensecurity').then(this.onWebsocketMessageReceived)
+    loadWebsocket(
+      this.onWebsocketMessageReceived, 'egscuigardensecurity'
+    )
   },
   methods: {
     // websocket 数据获取

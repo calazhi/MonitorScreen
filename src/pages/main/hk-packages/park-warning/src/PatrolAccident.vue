@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-show="true">
+    <div class="patrol-report-box" v-show="true">
       <div class="ico-btn-group">
         <!--<a class="ico turn-off" @click="confirmBox"></a>-->
         <a class="ico exit-full" @click="handleClose"></a>
@@ -11,15 +11,7 @@
         <div class="left-box">
           <div class="view">
             <img v-if='imgPlayShow' :src="warnData.eventBody.scenePic[0]" class="pic" :onerror="errorTip">
-            <video v-if='!imgPlayShow' :src="warnData.eventBody.sceneVideo" loop autoPlay="false" width="100%" height="100%" type="video/ogg" aria-label="Close" class="video-play"></video>
-          </div>
-          <div class="tabs-box">
-            <div class="tabs-btn-wrap">
-              <button class="tabs-btn active"><span class="icon-snapshot"></span>抓拍</button>
-            </div>
-            <div class="tabs-btn-wrap">
-              <button class="tabs-btn"><span class="icon-video"></span>实时监控</button>
-            </div>
+            <video @click="playVideo" v-if='!imgPlayShow' :src="warnData.eventBody.sceneVideo" width="100%" height="100%" type="video/ogg" aria-label="Close" class="video-play"></video>
           </div>
         </div>
         <div class="right-box">
@@ -33,11 +25,19 @@
               </div>
             </li>-->
             <li class="first-li-normal">
-              <p><span class="name">事&nbsp;件：</span>{{warnData.eventBody.eventContent}}</p>
+              <!--<p><span class="name">事&nbsp;件：</span>{{warnData.eventBody.eventContent}}</p>-->
+              <div :native="false" :style="getHeightStyle(60)" viewClass="abnormal-event" :noresize="false" class="img-scrollbox">
+                <div>
+                  <span class="name">事&nbsp;件：</span>
+                  {{warnData.eventBody.eventContent}}
+                </div>
+              </div>
               <p><span class="name">时&nbsp;间：</span><span class="number">{{formatDate(warnData.eventHeader.occurTime,'YYYY-MM-DD hh:mm:ss')}}</span></p>
               <p><span class="name">地&nbsp;点：</span>{{warnData.eventBody.address}}</p>
             </li>
-            <li><span class="name">状&nbsp;态：</span>待处理</li>
+            <li>
+              <p><span class="name">状&nbsp;态：</span>{{eventStatus}}</p>
+            </li>
             <li v-if="!checkedInfo.checkedSecurity.length">
               <span class="name" v-show="!dealWarnInfo">推荐保安：</span>
               <span class="name" v-show="dealWarnInfo">保&nbsp;安：</span>
@@ -54,9 +54,10 @@
             </li>
           </ul>
           <div class="btn-box">
-            <button type="button" class="btn cancel">解除警报</button>
-            <button type="button" class="btn confirm" @click="dispatchGuard" v-show="!dealWarnInfo">派遣保安</button>
-            <button type="button" class="btn doing" v-show="dealWarnInfo">处 理 中</button>
+            <button type="button" class="btn cancel" @click="openForcibleDismissPop">解除警报</button>
+            <button type="button" class="btn confirm" @click="dispatchGuard" :class="{ 'disabled': !checkedInfo.recommedSecurity.length}">派遣保安</button>
+            <!--<button type="button" class="btn confirm" @click="dispatchGuard" v-show="!dealWarnInfo">派遣保安</button>-->
+            <!--<button type="button" class="btn doing" v-show="dealWarnInfo">处 理 中</button>-->
           </div>
         </div>
       </div>
@@ -80,20 +81,36 @@
             <span class="name">处理结果：</span>{{checkedInfo.doneData&&checkedInfo.doneData.handleDetail}}</li>
         </ul>
       </div>
-      <!--确定是否解除警报-->
-      <div class="clear-confirm-box" v-show="isConfirm">
-        <div class="bg"></div>
-        <div class="con">
-          <p class="title">确定要解除该窗口的所有报警吗？</p>
-          <div class="btn-box">
-            <button type="button" class="btn cancel" @click="cancleDismiss">取 消</button>
-            <button type="button" class="btn confirm" @click="mulDismissWarn">解 除</button>
+
+    <!--解除该窗口全部预警的弹窗  ### 先注释保留改功能 ###-->
+      <!--<div class="clear-confirm-box" v-show="isConfirm">-->
+      <!--<iframe frameborder="0 " class="iframe-box "></iframe>-->
+        <!--<div class="bg"></div>-->
+        <!--<div class="con">-->
+          <!--<p class="title">确定要解除该窗口的所有报警吗？</p>-->
+          <!--<div class="btn-box">-->
+            <!--<button type="button" class="btn cancel" @click="cancleDismiss">取 消</button>-->
+            <!--<button type="button" class="btn confirm" @click="mulDismissWarn">解 除</button>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
+
+      <!--强制解除该窗口预警的弹窗-->
+      <div class="clear-confirm-box " v-show="showForcibleDismissPop">
+        <iframe frameborder="0 " class="iframe-box "></iframe>
+        <div class="bg "></div>
+        <div class="con ">
+          <p class="title ">确定要解除该报警吗？</p>
+          <div class="btn-box ">
+            <button type="button" class="btn cancel " @click="closeForcibleDismissPop">取 消</button>
+            <button type="button" class="btn confirm " @click="forceDismissWarn">解 除</button>
           </div>
         </div>
       </div>
+
     </div>
     <div class="note-wrap" v-show="toast.show">
-      <!-- <iframe frameborder="0" class="iframe-box"></iframe> -->
+      <iframe frameborder="0" class="iframe-box"></iframe>
       <transition name="fade" mode="out-in">
         <div class="note-pop">{{toast.msg}}</div>
       </transition>
@@ -130,7 +147,27 @@ export default {
       },
       isDispatch: true,
       videoPlayDom: null,
-      errorTip: 'this.src="' + require('../../../../../../static/images/failure-warning.png') + '"'
+      errorTip: 'this.src="' + require('../../../../../../static/images/failure-warning.png') + '"',
+      showForcibleDismissPop: false, // 是否显示解除该预警的弹窗showForcibleDismissPop
+    }
+  },
+  computed: {
+    // 预警事件的当前处理状态
+    eventStatus () {
+      switch (this.warnData.eventHeader.eventStatus) {
+        case '1':
+          return '派遣中'
+        case '2':
+          return '处理中'
+        case '3':
+          return '已完成'
+        case '4':
+          return '已解除'
+        case '98':
+          return '手动解除'
+        case '99':
+          return '待处理'
+      }
     }
   },
   mounted () {
@@ -233,7 +270,12 @@ export default {
     },
     // 解除单条警报
     dismissWarn () {
-      this.$emit('mulDismissWarn', this.warnData.eventHeader.eventId)
+      this.$emit('mulDismissWarn', {eventId: this.warnData.eventHeader.eventId, forcible: false})
+    },
+    // 强制解除当前预警
+    forceDismissWarn () {
+      console.log('强制解除当前预警')
+      this.$emit('mulDismissWarn', {eventId: this.warnData.eventHeader.eventId, forcible: true})
     },
     // 内容滚动条
     getHeightStyle (h = 0) {
@@ -264,6 +306,22 @@ export default {
       }
       if (this.warnData.eventBody.sceneVideo === undefined && this.warnData.eventBody.scenePic.length === 0) {
         this.imgPlayShow = true
+      }
+    },
+    // 打开强制解除当前预警的弹窗
+    openForcibleDismissPop () {
+      this.showForcibleDismissPop = true
+    },
+    // 关闭强制解除弹窗
+    closeForcibleDismissPop () {
+      this.showForcibleDismissPop = false
+    },
+    // todo 缺一个播放图标
+    playVideo () {
+      if (this.videoPlayDom.paused) {
+        this.videoPlayDom.play()
+      } else {
+        this.videoPlayDom.pause()
       }
     }
   },

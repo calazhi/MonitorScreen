@@ -10,27 +10,48 @@ let websocket = null
  * egscuicarstatistics 车辆统计
  * egscuipersonstatistics 人员统计
  */
-export const loadWebsocket = function (module) {
-  return new Promise((resolve, reject) => {
-    getWsPath.then(path => {
-      let socketUrl = `//${path}/sockjs/${module}/readData`
-      websocket = new SockJS(socketUrl)
-      websocket.onopen = () => {
-        console.info('WebSocket连接开始')
-      }
-      websocket.onmessage = event => {
-        resolve(event.data)
-      }
-      websocket.onclose = () => {
-        console.warn('WebSocket连接关闭...尝试重连')
-        websocket = loadWebsocket(module)
-      }
-      websocket.onerror = () => {
-        console.error('WebSocket连接出错...')
-        reject(new Error('WebSocket连接出错...'))
-      }
-      // console.log('status: ' + websocket.readyState)
-    })
+// export const loadWebsocket = function (module) {
+//   return new Promise((resolve, reject) => {
+//     getWsPath.then(path => {
+//       let socketUrl = `//${path}/sockjs/${module}/readData`
+//       websocket = new SockJS(socketUrl)
+//       websocket.onopen = () => {
+//         console.info('WebSocket连接开始')
+//       }
+//       websocket.onmessage = event => {
+//         resolve(event.data)
+//       }
+//       websocket.onclose = () => {
+//         console.warn('WebSocket连接关闭...尝试重连')
+//         websocket = loadWebsocket(module)
+//       }
+//       websocket.onerror = () => {
+//         console.error('WebSocket连接出错...')
+//         reject(new Error('WebSocket连接出错...'))
+//       }
+//       // console.log('status: ' + websocket.readyState)
+//     })
+//   })
+// }
+
+export const loadWebsocket = function (callback, module) {
+  getWsPath.then(path => {
+    let socketUrl = `//${path}/sockjs/${module}/readData`
+    websocket = new SockJS(socketUrl)
+    websocket.onopen = () => {
+      console.info('WebSocket连接开始')
+    }
+    websocket.onmessage = event => {
+      callback(event.data)
+    }
+    websocket.onclose = () => {
+      console.warn('WebSocket连接关闭...尝试重连')
+      websocket = loadWebsocket(module)
+    }
+    websocket.onerror = () => {
+      console.error('WebSocket连接出错...')
+    }
+    // console.log('status: ' + websocket.readyState)
   })
 }
 //

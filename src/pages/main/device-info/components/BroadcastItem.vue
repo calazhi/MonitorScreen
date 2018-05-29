@@ -45,22 +45,8 @@
           <span>{{ abnormal }}</span>
         </div>
       </div>
-      <device-desc-box :deviceName="broadcastInfo[0]" :orgName="broadcastInfo[1]" :deviceCode="broadcastInfo[2]" :deviceTypeDesc="broadcastInfo[3]" :providerName="broadcastInfo[4]" :deviceIP="broadcastInfo[5]" :devicePort="broadcastInfo[6]">
+      <device-desc-box :deviceName="broadcastInfo.deviceName || '-'" :orgName="broadcastInfo.orgName || '-'" :deviceCode="broadcastInfo.deviceCode || '-'" :deviceTypeDesc="broadcastInfo.deviceTypeDesc || '-'" :providerName="broadcastInfo.providerName || '-'" :deviceIP="broadcastInfo.deviceIP || '-'" :devicePort="broadcastInfo.devicePort || '-'">
       </device-desc-box>
-      <!--<ul class="right-box">-->
-      <!--<li>-->
-      <!--<span class="name">设备名称：</span>{{ broadcastInfo[0] }}</li>-->
-      <!--<li>-->
-      <!--<span class="name">位&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;置：</span>{{ broadcastInfo[1] }}</li>-->
-      <!--<li>-->
-      <!--<span class="name">状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态：</span>{{ broadcastInfo[2] }}</li>-->
-      <!--<li>-->
-      <!--<span class="name">类&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型：</span>{{ broadcastInfo[3] }}</li>-->
-      <!--<li>-->
-      <!--<span class="name">厂&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;商：</span>{{ broadcastInfo[4] }}</li>-->
-      <!--<li>-->
-      <!--<span class="name">IP和端口：</span>{{ broadcastInfo[5] }}</li>-->
-      <!--</ul>-->
     </div>
   </div>
 </template>
@@ -95,9 +81,7 @@ export default {
   },
   data () {
     return {
-      broadcastInfo: [
-        '', '', '开启', '', '', '', ''
-      ],
+      broadcastInfo: {},
       broadcastName: '未播放任务',
       volLong: 10,
       volValue: 2,
@@ -163,12 +147,13 @@ export default {
     getBroadcastEquipmentInfo () {
       getBroadcastdialog({ deviceId: this.deviceId }).then(res => {
         console.log(res)
-        this.broadcastInfo[0] = res.deviceName
-        this.broadcastInfo[1] = res.installAddress
-        this.broadcastInfo[3] = res.deviceTypeName
-        this.broadcastInfo[4] = res.providerName
-        this.broadcastInfo[5] = res.deviceIP || '-'
-        this.broadcastInfo[6] = res.devicePort || '-'
+        this.broadcastInfo.deviceName = res.deviceName
+        this.broadcastInfo.orgName = res.installAddress
+        this.broadcastInfo.deviceCode = '开启'
+        this.broadcastInfo.deviceTypeDesc = res.deviceTypeName
+        this.broadcastInfo.providerName = res.providerName
+        this.broadcastInfo.deviceIP = res.deviceIP || '-'
+        this.broadcastInfo.devicePort = res.devicePort || '-'
       })
     },
     /**
@@ -196,7 +181,7 @@ export default {
           tempParam.taskId = res.broadcastId
           tempParam.sessionId = res.sessionId
           if (res.status == 1) {
-            tempParam.broadcastInfo[2] = '开启'
+            tempParam.broadcastInfo.deviceCode = '开启'
             tempParam.statusShow = false
             if (tempParam.taskId === tempParam.taskList[tempParam.nowIndex].uuid) {
               tempParam.isStatusShow = false
@@ -204,7 +189,7 @@ export default {
               tempParam.isStatusShow = true
             }
           } else {
-            tempParam.broadcastInfo[2] = '关闭'
+            tempParam.broadcastInfo.deviceCode = '关闭'
             tempParam.isStatusShow = true
             tempParam.statusShow = true
           }
@@ -293,11 +278,11 @@ export default {
           if (res.status == 1) {
             tempParam.isStatusShow = false
             tempParam.statusShow = false
-            tempParam.broadcastInfo[2] = '开启'
+            tempParam.broadcastInfo.deviceCode = '开启'
           } else {
             tempParam.isStatusShow = true
             tempParam.statusShow = true
-            tempParam.broadcastInfo[2] = '关闭'
+            tempParam.broadcastInfo.deviceCode = '关闭'
           }
           if (!res.audioclipName) {
             tempParam.broadcastName = '未播放任务'
@@ -359,11 +344,11 @@ export default {
             if (res.status == '1') {
               this.isStatusShow = false
               this.statusShow = false
-              this.broadcastInfo[2] = '开启'
+              tempParam.broadcastInfo.deviceCode = '开启'
             } else if (res.status == '2') {
               this.isStatusShow = true
               this.statusShow = true
-              this.broadcastInfo[2] = '关闭'
+              tempParam.broadcastInfo.deviceCode = '关闭'
             }
             this.loading = false
           }
@@ -556,7 +541,7 @@ export default {
       this.taskList = []
       this.isStatusShow = true
       this.statusShow = true
-      this.broadcastInfo[2] = '关闭'
+      tempParam.broadcastInfo.deviceCode = '关闭'
       tempParam.broadcastName = '未播放任务'
       this.volValue = 10
       this.checked = false
@@ -602,6 +587,8 @@ export default {
         if (!val || val.markerType !== 'broadcast') {
           return
         }
+        tempParam.taskList = []
+        tempParam.broadcastInfo = {}
         console.log(val)
         tempParam.deviceId = val.deviceId
         tempParam.getBroadcast()

@@ -5,8 +5,8 @@
       <p class="court-title">{{courtTitle}}</p>
       <p class="empty-tips" v-if="isEmpty===true">小区停车场图不存在,请先至管理端配置场景信息!</p>
       <div class="park-floor-con" v-show="isShowParkScene">
-        <!-- <a href="javascript:;" class="arrow icon-arrow-up" id="floor-prev"></a> -->
-        <a href="javascript:;" class="arrow" id="floor-prev"></a>
+        <a href="javascript:;" class="arrow icon-arrow-up" id="floor-prev"></a>
+        <!-- <a href="javascript:;" class="arrow" id="floor-prev"></a> -->
         <div class="floor-box-wrap" id="floor-wrap">
           <div class="floor-box">
             <div class="floor" :class="{'active': index === currentIndex }" v-for="(item, index) in buildList" :key="index" :disabled="isEmpty===true" @click="onClickBuildHandler(index, item.areaName)">
@@ -14,8 +14,8 @@
             </div>
           </div>
         </div>
-        <!-- <a href="javascript:;" class="arrow icon-arrow-down disabled" id="floor-next"></a> -->
-        <a href="javascript:;" class="arrow disabled" id="floor-next"></a>
+        <a href="javascript:;" class="arrow icon-arrow-down disabled" id="floor-next"></a>
+        <!-- <a href="javascript:;" class="arrow disabled" id="floor-next"></a> -->
       </div>
       <!-- <map-control-bar ref="controlBar" @onSceneChange="onSceneChangeHandler" @mapZoomChange="onMapZoomChangeHandler" @onClickBuildHandler="onClickBuildHandler" :parkAreaList="buildList"></map-control-bar> -->
       <map-control-bar ref="controlBar" :scene-type="0" :magnification="magnification" @onSceneChange="onSceneChangeHandler" @mapZoomChange="onMapZoomChangeHandler"></map-control-bar>
@@ -369,6 +369,12 @@ export default {
             })
           })
         } else if (['control', 'brake', 'gates', 'elevator', 'camera', 'broadcast', 'robot', 'signpost', 'fence', 'lock'].indexOf(e.feature.markerType) !== -1) {
+          if ((!e.feature.longitude || !e.feature.latitude) && e.feature.markerStatus % 2 === 0) { // 地锁等只有position，没有经纬度坐标，需要转换坐标，否则设备异常时无法查询推荐保安
+            let lonlat = this.mapObj.transBitmapToWGS(e.coordinate)
+            console.log('转换后的坐标 lonlat=' + JSON.stringify(lonlat))
+            e.feature.longitude = lonlat[0]
+            e.feature.latitude = lonlat[1]
+          }
           castAnimate(animatePoint, 'D').then(() => {
             // store.commit(mutationTypes.SHOW_DEVICE_INFO, sendDate)
             store.commit('sendMessage', {

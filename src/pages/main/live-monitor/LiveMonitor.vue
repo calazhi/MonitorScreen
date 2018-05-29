@@ -20,13 +20,11 @@
     <div class="big-box">
       <a class="icon-return" href="javascript:;" @click="backMultiScreen" v-if="ocxScreenShow"></a>
       <!-- <img src="/static/images/p02.jpg" alt="" class="pic"> -->
-      <div class="pic">
-        <!--单路预览-->
-        <!-- <video-playback :warningData="warningData"></video-playback> -->
-        <!-- <single-screen :videoplayData="videoplayData"></single-screen> -->
-        <!-- <four-split-screen :fourSplitData="fourSplitData"></four-split-screen> -->
-        <multi-screen @multitosingle="multiTosingle" ref="multi"></multi-screen>
-      </div>
+      <!--单路预览-->
+      <!-- <video-playback :warningData="warningData"></video-playback> -->
+      <!-- <single-screen :videoplayData="videoplayData"></single-screen> -->
+      <!-- <four-split-screen :fourSplitData="fourSplitData"></four-split-screen> -->
+      <multi-screen @multitosingle="multiTosingle" ref="multi"></multi-screen>
     </div>
   </div>
 </template>

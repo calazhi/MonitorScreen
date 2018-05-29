@@ -70,10 +70,9 @@ export default {
   mounted () {
     // this.draw('parking-rate', 10, '#2d2260')
     this.queryAllParkseatsCounts()
-
-    // 启动 websocket
-    loadWebsocket('egscuicarstatistics').then(this.onWebsocketMessageReceived)
-
+    loadWebsocket(
+      this.onWebsocketMessageReceived, 'egscuicarstatistics'
+    )
     // 获取下一个2小时整点
     this.getNextTwoHours()
 
